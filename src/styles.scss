@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+// .tooth-label{
+//   color: white !important;
+// }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-tab-label {
+
+  min-width: 60px !important;
+
+}
+
+.background-highlight {
+  background-color:#DBDBDB !important;
+  font-size: 12px !important;
+}
+.background-white {
+  background-color:white !important;
+  font-size: 12px !important;
+}
+
+
+
+.obit-controls-gizmo {
+	position: absolute;
+	top: 2em;
+	right: 88em;
+   z-index: 1000;
+    background-color: #FFF0;
+    border-radius: 100%;
+   transition: background-color .15s linear;
+    cursor: pointer;
+}
+
+.obit-controls-gizmo.dragging, .obit-controls-gizmo:hover  {
+    background-color: #FFF3;
+    
+}
+
+.obit-controls-gizmo.inactive {
+    pointer-events: none;
+    background-color: #FFF0 !important; 
+}
+
+.dg.a {
+    float: left !important;
+    margin-left: 2em !important;
+}

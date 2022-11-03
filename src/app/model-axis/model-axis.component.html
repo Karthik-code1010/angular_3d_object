@@ -1,0 +1,500 @@
+
+
+<as-split direction="horizontal">
+    <as-split-area [size]="100">
+        <as-split direction="vertical" style="height: 100vh;">
+            <as-split-area [size]="x" [minSize]="minSize">
+
+                
+                <as-split direction="horizontal">
+                    <as-split-area [size]="100">
+                        <as-split direction="horizontal">
+                            <as-split-area [size]="x1" [minSize]="minSize1">
+                
+                                <div id="jeepObjectId" style="height: 100%;width: 100%;display: block;">
+                                    <canvas #canvas  id="canvas" style="height: 100%;width: 100%;display: block;"></canvas>
+                                </div>
+                
+                            </as-split-area>
+                            <as-split-area [size]="y1" style="margin-top: 5px">
+                                <div style="margin: 10px;">
+                                    <form class="example-form"  [formGroup]="myForm">
+                                        <mat-form-field style="width: 100%;" class="example-full-width" appearance="outline">
+                                          <mat-label>Search</mat-label>
+                                          <mat-icon matSuffix class="color-blue">search</mat-icon>
+                                          <input type="text" matInput  [(ngModel)]="searchName" [formControl]="myControl" formControlName="myControl"  (change)="valuechange($event)"   (click)="valuechange($event)" >
+                                          <!-- 
+                                            [matAutocomplete]="auto"
+                                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                              {{option.name}}
+                                            </mat-option>
+                                          </mat-autocomplete> -->
+                                        </mat-form-field>
+                                      </form>
+                                </div>
+                                <div style="margin-top: -20px;">
+                                    <mat-tab-group>
+                                        <mat-tab style="min-height: 60px !important;" label="SCENE">
+                                          
+                                          <!-- <textarea name="scene" disabled id="sceneArea" cols="30" rows="10">
+                                
+                                            
+                                          </textarea> -->
+                                        
+                                          <div style="margin: 10px; font-size: 12px !important;padding-top: 20px; ">
+                                            <mat-tree #tree [dataSource]="dataSource" [treeControl]="treeControl" >
+                                                <!-- This is the tree node template for leaf nodes -->
+                                               
+                                                <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding  matTreeNodePaddingIndent="5" class="margintop-tree">
+                                                  <!-- use a disabled button to provide padding for tree leaf 
+                                                
+                                                [ngStyle]="{'background-color': node.isHighlight==true ? '#DBDBDB' : 'white' }"
+
+                                                [ngStyle]="{'background-color': node.isHighlight==true ? '#DBDBDB' : 'white' }" 
+                                                -->
+                                                  <button style="background-color: white;" mat-icon-button disabled></button>
+                                                  <span   style="font-size: 12px !important;" (click)="focusObject(node);"  [ngClass]="{'background-highlight': node.isHighlight==true, 'background-white' : node.isHighlight==false }" >
+                                                    {{node.name}}
+                                                  </span>
+                                               
+                                                </mat-tree-node>
+                                                <!-- This is the tree node template for expandable nodes -->
+                                                <mat-tree-node selection=true *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="5" class="margintop-tree">
+                                                  <button class="treebtn" mat-icon-button matTreeNodeToggle
+                                                          [attr.aria-label]="'Toggle ' + node.name">
+                                                    <mat-icon style="font-size: 14px;" class="mat-icon-rtl-mirror">
+                                                      {{treeControl.isExpanded(node) ? 'add' : 'add'}}
+                                                    </mat-icon>
+                                                  </button>
+                                                  <span style="font-size: 12px !important;" (click)="focusObject(node)" (click)="focusObject(node);"   [ngClass]="{'background-highlight': node.isHighlight==true, 'background-white' : node.isHighlight==false }" >
+                                                    {{node.name}}
+                                                  </span>
+                                                </mat-tree-node>
+                                              </mat-tree>
+                                         </div>
+                                
+                                
+                                
+                                        </mat-tab>
+                                        <mat-tab label="TAB 2"> Content 2 </mat-tab>
+                                        <mat-tab label="TAB 3"> Content 3 </mat-tab>
+                                      </mat-tab-group>
+                                
+                        
+                                </div>
+                         
+                          
+                            </as-split-area>
+                        </as-split>
+                    </as-split-area>
+                </as-split>
+
+
+
+<!-- <div fxLayout="row" >
+
+    <div fxFlex="80">
+<div id="jeepObjectId">
+    <canvas #canvas  id="canvas" style="height: 600px; width: 1200px;"></canvas>
+</div>
+   
+    </div>
+    <div  fxFlex="20" >
+        <div fxLayout="column" >
+            <mat-tab-group>
+                <mat-tab style="min-height: 60px !important;" label="SCENE">
+                  
+                
+                
+                  <div style="margin: 10px; font-size: 12px !important;padding-top: 20px; ">
+                    <mat-tree #tree [dataSource]="dataSource" [treeControl]="treeControl" >
+                    
+                       
+                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding  matTreeNodePaddingIndent="5" class="margintop-tree">
+                        
+                          <button style="background-color: white;" mat-icon-button disabled></button>
+                          <span  [ngStyle]="{'background-color': node.isHighlight==true ? '#DBDBDB' : 'white' }" style="font-size: 12px !important;" (click)="focusObject(node);"  [ngClass]="{ 'background-highlight':  node.isHighlight==true }">
+                            {{node.name}}
+                          </span>
+                       
+                        </mat-tree-node>
+              
+                        <mat-tree-node selection=true *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="5" class="margintop-tree">
+                          <button class="treebtn" mat-icon-button matTreeNodeToggle
+                                  [attr.aria-label]="'Toggle ' + node.name">
+                            <mat-icon style="font-size: 14px;" class="mat-icon-rtl-mirror">
+                              {{treeControl.isExpanded(node) ? 'add' : 'add'}}
+                            </mat-icon>
+                          </button>
+                          <span [ngStyle]="{'background-color': node.isHighlight==true ? '#DBDBDB' : 'white' }" style="font-size: 12px !important;" (click)="focusObject(node)" (click)="focusObject(node);"  [ngClass]="{ 'background-highlight':  node.isHighlight==true }">
+                            {{node.name}}
+                          </span>
+                        </mat-tree-node>
+                      </mat-tree>
+                 </div>
+        
+        
+        
+                </mat-tab>
+                <mat-tab label="TAB 2"> Content 2 </mat-tab>
+                <mat-tab label="TAB 3"> Content 3 </mat-tab>
+              </mat-tab-group>
+        
+
+        </div>
+
+        
+    
+    </div>
+</div> -->
+
+            </as-split-area>
+            <as-split-area [size]="y" style="margin-top: 5px">
+         
+            <div style="margin-left: 10px;">
+                <mat-tab-group>
+                    <mat-tab  label="OBJECT" >
+                      <div fxLayout="row" *ngIf="currentObjDetail" style="overflow: hidden;font-size: 13px;line-height: 20px;">
+                        <div fxFlex="35" >
+                            <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Type
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.type}}
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    UUID
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.uuid}}
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Name
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.name}}
+                                </div>
+            
+                               </div>
+
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Visible
+                                </div>
+                                <div fxFlex="80" >
+                                    <mat-checkbox class="example-margin"
+                                    [checked]="currentObjDetail.visible">
+                                    </mat-checkbox>
+                                    <!-- {{currentObjDetail.visible}} -->
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Render Order
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.renderOrder}}
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Shadow
+                                </div>
+                                <div fxFlex="80" >
+                                    <mat-checkbox class="example-margin"
+                                    [checked]="currentObjDetail.castShadow">
+                                    </mat-checkbox>   cast  
+                                    <mat-checkbox class="example-margin"
+                                    [checked]="currentObjDetail.receiveShadow">
+                                    </mat-checkbox>  receive
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Frustum Ceul
+                                </div>
+                                <div fxFlex="80" >
+                                    <mat-checkbox class="example-margin"
+                                    [checked]="currentObjDetail.frustumCulled">
+                                    </mat-checkbox> 
+                                
+                                </div>
+            
+                               </div>
+                        </div>
+                        <div fxFlex="35" >
+                            <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Position
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.position.x}} {{currentObjDetail.position.y}} {{currentObjDetail.position.z}} 
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Rotation
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.rotation._x}} {{currentObjDetail.rotation._y}} {{currentObjDetail.rotation._z}} 
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    Scale
+                                </div>
+                                <div fxFlex="80" >
+                                    {{currentObjDetail.scale.x}} {{currentObjDetail.scale.y}} {{currentObjDetail.scale.z}} 
+                                </div>
+            
+                               </div>
+                               <div fxLayout="row" style="padding: 5px;">
+                                <div fxFlex="20" >
+                                    User data
+                                </div>
+                                <div fxFlex="80" >
+                                    <textarea style="height: 60px;" name="tobj" id="iaobj" cols="30" rows="10" value=" {{currentObjDetail.userData | json}} ">
+
+                                    </textarea>
+                                   
+                                </div>
+            
+                               </div>
+                        </div>
+
+                        <div fxFlex="30">
+
+                        </div>
+                      </div>
+                
+              
+              
+                    </mat-tab>
+                    <mat-tab label="GEOMETRY"> 
+                        
+                        <div fxLayout="row" *ngIf="currentObjDetail" style="overflow: hidden;font-size: 13px;line-height: 20px;">
+                            <div fxFlex="35" >
+                                <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Type
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.geometry.type}}
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        UUID
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.geometry.uuid}}
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Name
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.geometry.name}}
+                                    </div>
+                
+                                   </div>
+    
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Attribute
+                                    </div>
+                                    <div fxFlex="80" >
+                                      <div fxLayout="column" >
+                                        <span  *ngIf="currentObjDetail.geometry.attributes.index">index  {{currentObjDetail.geometry.attributes.index.count}}</span>
+                                        <span  *ngIf="currentObjDetail.geometry.attributes.normal">normal {{currentObjDetail.geometry.attributes.normal.count}} ({{currentObjDetail.geometry.attributes.normal.itemSize}})</span>
+                                        <span  *ngIf="currentObjDetail.geometry.attributes.position">position {{currentObjDetail.geometry.attributes.position.count}} ({{currentObjDetail.geometry.attributes.position.itemSize}})</span>
+                                        <span *ngIf="currentObjDetail.geometry.attributes.tangent">tangent {{currentObjDetail.geometry.attributes.tangent.count}} ({{currentObjDetail.geometry.attributes.tangent.itemSize}})</span>
+                                        <span *ngIf="currentObjDetail.geometry.attributes.uv">uv {{currentObjDetail.geometry.attributes.uv.count}} ({{currentObjDetail.geometry.attributes.uv.itemSize}})</span>
+                                      </div>
+                                    </div>
+                
+                                   </div>
+                              
+                                
+                            </div>
+                            <div fxFlex="35" >
+                                <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Bounds 
+                                    </div>
+                                    <div fxFlex="80" >
+                                      <div fxLayout="column" >
+                                        <span  *ngIf="currentObjDetail.geometry.boundingBox.min">Min: {{currentObjDetail.geometry.boundingBox.min.x | number : '1.2-2'}} {{currentObjDetail.geometry.boundingBox.min.y | number : '1.2-2'}} {{currentObjDetail.geometry.boundingBox.min.z | number : '1.2-2'}}</span>
+                                        <span  *ngIf="currentObjDetail.geometry.boundingBox.max">Max: {{currentObjDetail.geometry.boundingBox.max.x | number : '1.2-2'}} {{currentObjDetail.geometry.boundingBox.max.y | number : '1.2-2'}} {{currentObjDetail.geometry.boundingBox.max.z | number : '1.2-2'}}</span>
+                                      
+                                    </div>
+                                    </div>
+                
+                                   </div>
+                                
+                            </div>
+    
+                            <div fxFlex="30">
+    
+                            </div>
+                          </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    </mat-tab>
+                    <mat-tab label="MATERIAL">
+                        
+                        
+                           
+                        <div fxLayout="row" *ngIf="currentObjDetail" style="overflow: hidden;font-size: 13px;line-height: 20px;">
+                            <div fxFlex="35" >
+                                <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Type
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.type}}
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        UUID
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.uuid}}
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Name
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.name}}
+                                    </div>
+                
+                                   </div>
+    
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Color
+                                    </div>
+                                    <div fxFlex="80" >
+                                        <input type="color" id="body" name="body"
+                                        value="rgb({{currentObjDetail.material.color.r}},{{currentObjDetail.material.color.g}},{{currentObjDetail.material.color.b}})">
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Emissive
+                                    </div>
+                                    <div fxFlex="80" >
+                                        <input type="color" id="body" name="body"
+                                        value="rgb({{currentObjDetail.material.emissive.r}},{{currentObjDetail.material.emissive.g}},{{currentObjDetail.material.emissive.b}})">
+                                    </div>
+                
+                                   </div>
+                                  
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Roughness
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.roughness}}
+                                    </div>
+                
+                                   </div>
+                              
+                                
+                            </div>
+                            <div fxFlex="35" >
+                                <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Metalness 
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.metalness}}
+
+                                    </div>
+                
+                                   </div>
+
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        vertexColors 
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.vertexColors}}
+
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        Opacity
+                                    </div>
+                                    <div fxFlex="80" >
+                                        {{currentObjDetail.material.opacity}}
+
+                                    </div>
+                
+                                   </div>
+                                   <div fxLayout="row" style="padding: 5px;">
+                                    <div fxFlex="20" >
+                                        User data
+                                    </div>
+                                    <div fxFlex="80" >
+                                       
+                                        <textarea style="height: 60px;" name="tobj" id="iaobj" cols="30" rows="10" value=" {{currentObjDetail.material.userData | json}} ">
+
+                                        </textarea>
+
+                                    </div>
+                
+                                   </div>
+                                
+                            </div>
+    
+                            <div fxFlex="30">
+    
+                            </div>
+                          </div>
+                    
+
+
+
+                    </mat-tab>
+                  </mat-tab-group>
+              
+            </div>
+            </as-split-area>
+        </as-split>
+    </as-split-area>
+</as-split>
+
+
+
+
