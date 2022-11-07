@@ -216,7 +216,19 @@ private  controlsGizmo: any;
     // // this.controls.autoRotate = true;
 
     this.controls.enableZoom = true;
-    // this.controls.enablePan = false;
+    this.controls.enableDamping = false;
+   // this.controls.enableRotate = false;
+    //this.controls.enabled = false
+
+     //this.controls.enablePan = true;
+     //this.controls.lock();
+  //   this.controls.mouseButtons = {
+  //      LEFT: THREE.MOUSE.ROTATE,
+  //     MIDDLE: THREE.MOUSE.DOLLY,
+  //      RIGHT: THREE.MOUSE.PAN
+  // }
+ 
+  
     this.controls.update();
 
     // this.controls.minPolarAngle = Math.PI * 0.5;
@@ -235,6 +247,34 @@ private  controlsGizmo: any;
 
 
   };
+  cursonTrueFalse:boolean = false;
+
+enableMouseControl(){
+
+  if(this.cursonTrueFalse ==  false){
+  
+    console.log('disable work');
+    this.cursonTrueFalse = true
+
+   // this.controls.enabled = false;
+    // this.controls.enableRotate = false;
+    // this.controls.update();
+
+  }else{
+   
+
+    console.log('enable work');
+    this.cursonTrueFalse = false;
+   // this.controls.enabled = true;
+    // this.controls.enableRotate = true;
+    // this.controls.update();
+  }
+ 
+
+   
+
+
+}
 
   /**
    * Create the scene
@@ -658,6 +698,7 @@ this.camera.position.set(centerX, centerY, centerZ);
   meshArray(model: any) {
     var _this = this;
     if (model.type == "Mesh") {
+      model.material = model.material.clone()
       _this.teeth.push(model);
       _this.backupdata.push(model.clone());
       //_this.copyOfData.push(model);
@@ -699,9 +740,19 @@ this.camera.position.set(centerX, centerY, centerZ);
   onDocumentMouseMove(event: any) {
     event.preventDefault();
 
-  var elementhover:any = document.getElementById("jeepObjectId");
+    if(this.cursonTrueFalse == false){
+      var elementhover:any = document.getElementById("jeepObjectId");
       this.mouse.x = (event.clientX / elementhover.clientWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / elementhover.clientHeight) * 2 + 1;
+    }
+    if(this.cursonTrueFalse == true){
+     // var elementhover:any = document.getElementById("jeepObjectId");
+      // this.mouse.x = (event.clientX / elementhover.clientWidth) * 2 - 1;
+      // this.mouse.y = -(event.clientY / elementhover.clientHeight) * 2 + 1;
+    }
+
+
+ 
    // this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     //this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     //this.canvas.clientWidth, this.canvas.clientHeight
@@ -752,71 +803,79 @@ this.camera.position.set(centerX, centerY, centerZ);
 
     // }
 
-    this.teeth.forEach((objdata:any,index:any) => {
-      objdata.material = this.backupdata[index].material;
-      
-    });
-
-    if (this.selectedTooth !== this.highlightedTooth) {
-      // this.selectedTooth && (this.selectedTooth.material = this.toothMaterial);
-      if (this.selectedTooth) {
-        var myData = this.backupdata.filter((data: any) => {
-          return data.name == this.selectedTooth.name;
-        });
-
-        this.selectedTooth.material = myData[0].material;
-
-   
-         
-   
-      }
-
-      
-      this.selectedTooth = this.highlightedTooth;
-      this.selectedTooth &&
-        (this.selectedTooth.material = this.selectedToothMaterial);
-
-
-        this.currentToothObj =  this.selectedTooth
-        this.currentObjDetail = this.selectedTooth
-        // currentTooth.material.color.set( Math.random() * 0xffffff );
-         console.log('currentTooth->',this.currentToothObj);
-         this.scene.children.forEach((sobj:any)=>{
-           if(sobj.type == 'BoxHelper'){
+    if(this.cursonTrueFalse == false){
+      this.teeth.forEach((objdata:any,index:any) => {
+        objdata.material = this.backupdata[index].material;
+        
+      });
+  
+      if (this.selectedTooth !== this.highlightedTooth) {
+        // this.selectedTooth && (this.selectedTooth.material = this.toothMaterial);
+        if (this.selectedTooth) {
+          var myData = this.backupdata.filter((data: any) => {
+            return data.name == this.selectedTooth.name;
+          });
+  
+          this.selectedTooth.material = myData[0].material;
+  
      
-             sobj.visible = false
-           }
-         });
-   
-         
-         var box = new THREE.BoxHelper( this.currentToothObj );
-         this.scene.add( box );
-         this.tree.treeControl.expandAll();
-   
-         console.log( this.currentToothObj.id)
-         console.log('this.treeControl',this.treeControl)
-   
-         this.treeControl.dataNodes.forEach((element:any)=>{
-           if(element.id == this.currentToothObj.id){
-             element.isHighlight = true;
-   
-           }else{
-             element.isHighlight = false;
-           }
-         })
-   
-         console.log('this.treeFlattener',this.treeFlattener)
-   
-         console.log('data sourse',this.dataSource)
-   
-
-
-
-    } else {
-      this.selectedTooth &&
-        (this.selectedTooth.material = this.highlightedToothMaterial);
-      this.selectedTooth = null;
+           
+     
+        }
+  
+        
+        this.selectedTooth = this.highlightedTooth;
+        this.selectedTooth &&
+          (this.selectedTooth.material = this.selectedToothMaterial);
+  
+  
+          this.currentToothObj =  this.selectedTooth
+          this.currentObjDetail = this.selectedTooth
+          // currentTooth.material.color.set( Math.random() * 0xffffff );
+           console.log('currentTooth->',this.currentToothObj);
+           this.scene.children.forEach((sobj:any)=>{
+             if(sobj.type == 'BoxHelper'){
+       
+               sobj.visible = false
+             }
+           });
+     
+           
+           var box = new THREE.BoxHelper( this.currentToothObj );
+           this.scene.add( box );
+           this.tree.treeControl.expandAll();
+     
+           console.log( this.currentToothObj.id)
+           console.log('this.treeControl',this.treeControl)
+     
+           this.treeControl.dataNodes.forEach((element:any)=>{
+             if(element.id == this.currentToothObj.id){
+               element.isHighlight = true;
+     
+             }else{
+               element.isHighlight = false;
+             }
+           })
+     
+           console.log('this.treeFlattener',this.treeFlattener)
+     
+           console.log('data sourse',this.dataSource)
+     
+  
+  
+  
+      } else {
+        this.selectedTooth &&
+          (this.selectedTooth.material = this.highlightedToothMaterial);
+        this.selectedTooth = null;
+      }
+    
     }
+    if(this.cursonTrueFalse == true){
+
+    }
+
+   
   }
 
 
@@ -960,6 +1019,10 @@ this.camera.position.set(centerX, centerY, centerZ);
 
   focusObject(clickObj:any){
     console.log(clickObj);
+
+    if(this.cursonTrueFalse == false){
+      
+
     this.activeNode = clickObj
 
     this.teeth.forEach((objdata:any,index:any) => {
@@ -981,13 +1044,15 @@ this.camera.position.set(centerX, centerY, centerZ);
   var findIndex =   this.teeth.findIndex((element:any) => element.id == clickObj.id)
   console.log(findIndex)
   //this.teeth[findIndex] = 
- console.log(found);
- console.log(found.xLength, found.yLength, found.zLength)
+//  console.log(found);
+//  console.log(found.xLength, found.yLength, found.zLength)
  //found =this.teeth[0].material.clone();
 
  var box = new THREE.BoxHelper(  this.teeth[findIndex] );
  //var  currentTeeth =this.teeth[findIndex]
- //found.material.emissive.setHex(0x00ff00);
+ //this.teeth[findIndex].material.emissive.setHex(0xff99c2);
+ //this.teeth[findIndex].material.color.set(0xff99c2);
+ //this.teeth[findIndex].material.wireframe = true;
 //boundingBox
 //this.fitCameraTo(this.teeth[findIndex].geometry.boundingBox)
  //this.camera.position.set(-4, -4, -5);
@@ -1054,6 +1119,12 @@ this.currentObjDetail = this.teeth[findIndex]
 				//	this.scene.add( box );
 				//	box.applyMatrix4( found.matrix );
 				//	this.scene.add( cube );
+
+
+    }
+    if(this.cursonTrueFalse == true){
+      
+    }
 
   }
 }

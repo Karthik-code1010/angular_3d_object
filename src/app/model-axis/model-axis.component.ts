@@ -13,13 +13,14 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 //import { OrbitControls } from './OrbitControls';
-import { ViewHelper } from './viewHelper'
+//import { OrbitControlsGizmo } from './OrbitControlsGizmo';
 //import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
 /** Flat node with expandable and level information */
 
 // CommonJS:
 //import { GUI } from 'dat.gui'
 var dat = require('dat.gui');
+//var OrientationGizmo:any = require('OrientationGizmo');
 //var  OrbitControlsGizmo  = require('OrbitControlsGizmo')
 //declare let OrbitControlsGizmo: any;
 //var v = require("./OrbitControlsGizmo");
@@ -32,18 +33,19 @@ interface ExampleFlatNode {
   level: number;
 }
 
+
 @Component({
   selector: 'app-model-axis',
   templateUrl: './model-axis.component.html',
   styleUrls: ['./model-axis.component.scss']
 })
-export class ModelAxisComponent  implements OnInit, AfterViewInit {
+export class ModelAxisComponent   implements OnInit, AfterViewInit {
 
   myControl = new FormControl('');
   myForm!: FormGroup;
 
-  x: any = 65;
-  y: any = 35;
+  x: any = 70;
+  y: any = 30;
   minSize:any = 10;
 
 
@@ -152,7 +154,9 @@ private  controlsGizmo: any;
   currentToothObj :any;
   currentObjDetail: any;
   elementDiv: any;
- 
+  //copyOfData: any = [];
+  filteredData:any = [];
+  emissiveData: any;
 
   //? Helper Properties (Private Properties);
 
@@ -193,38 +197,38 @@ private  controlsGizmo: any;
     //const element:any = document.getElementById("jeepObjectId");
     this.elementDiv  = document.querySelector('#jeepObjectId');
     this.elementDiv.appendChild(renderer.domElement);
-    this.controls = new OrbitControls(this.camera, renderer.domElement);
    
+    this.controls = new OrbitControls(this.camera, renderer.domElement);
+    console.log('this.controls ==2>',this.controls)
     // const helper = new THREE.CameraHelper( this.camera );
     // this.scene.add( helper );
    
    
-  //   this.controlsGizmo = new OrbitControlsGizmo( this.controls , { size: 100, padding: 8 });
-   //this.controlsGizmo= new ViewHelper('','');
+    this.controlsGizmo = new OrbitControlsGizmo( this.controls , { size: 100, padding: 8 });
+    console.log('this.controlsGizmo',this.controlsGizmo)
+     this.elementDiv.appendChild(this.controlsGizmo.domElement);
     // // document.body.appendChild(controlsGizmo.domElement);
-    
 
-   const viewhelp:any =    new ViewHelper( this.camera, renderer.domElement);
-
-   console.log('viewhelp',viewhelp);
-   viewhelp.position.set(0.081, 0.081, 0.081);
-   viewhelp.scale.set(0.021, 0.021, 0.021);
-   
-    // var cornerPoint = new THREE.Vector3();
-
-   
-    // viewhelp.position.copy(cornerPoint)
-    //     .add(new THREE.Vector3(1, 1, -1)); 
-        this.scene.add(viewhelp);
-
-    //viewhelp.render( this.renderer );
-    // this.elementDiv.appendChild(this.controlsGizmo.domElement);
+//     var orientationGizmo = new OrientationGizmo(this.camera, { size: 100, padding: 8 });
+// //document.body.appendChild(orientationGizmo);
+//      this.elementDiv.appendChild(orientationGizmo);
 
      
     // // this.controls.autoRotate = true;
 
     this.controls.enableZoom = true;
-    // this.controls.enablePan = false;
+    this.controls.enableDamping = false;
+   // this.controls.enableRotate = false;
+    this.controls.enabled = false
+
+     this.controls.enablePan = true;
+  //   this.controls.mouseButtons = {
+  //      LEFT: THREE.MOUSE.ROTATE,
+  //     MIDDLE: THREE.MOUSE.DOLLY,
+  //      RIGHT: THREE.MOUSE.PAN
+  // }
+ 
+  
     this.controls.update();
 
     // this.controls.minPolarAngle = Math.PI * 0.5;
@@ -243,6 +247,35 @@ private  controlsGizmo: any;
 
 
   };
+
+  cursonTrueFalse:boolean = false;
+
+  enableMouseControl(){
+  
+    if(this.cursonTrueFalse ==  false){
+    
+      console.log('disable work');
+      this.cursonTrueFalse = true
+  
+     // this.controls.enabled = false;
+      // this.controls.enableRotate = false;
+      // this.controls.update();
+  
+    }else{
+     
+  
+      console.log('enable work');
+      this.cursonTrueFalse = false;
+     // this.controls.enabled = true;
+      // this.controls.enableRotate = true;
+      // this.controls.update();
+    }
+   
+  
+     
+  
+  
+  }
 
   /**
    * Create the scene
@@ -264,8 +297,21 @@ console.log('gltf',gltf)
       box.getCenter(this.model.position); // this re-sets the mesh position
       this.model.position.multiplyScalar(-1);
       this.scene.add(this.model);
-     // this.scene.add( new THREE.AxesHelper( 20 ) );
+      //this.scene.add( new THREE.AxesHelper( 20 ) );
      //this.scene.add(new THREE.GridHelper(10, 10, "#666666", "#222222"));
+    //  const dir = new THREE.Vector3( 1, 2, 0 );
+    // const helper = new THREE.CameraHelper( this.camera );
+    //  this.scene.add( helper );
+
+    //  //normalize the direction vector (convert to vector of length 1)
+    //  dir.normalize();
+     
+    //  const origin = new THREE.Vector3( 0, 0, 0 );
+    //  const length = 1;
+    //  const hex = 0xffff00;
+     
+    //  const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
+    //  this.scene.add( arrowHelper );
 
       this.materialFun();
 
@@ -326,14 +372,7 @@ console.log('gltf',gltf)
     }());
   }
 
-  constructor() {
-
-
-    
-
-
-
-   }
+  constructor() { }
 
   ngOnInit(): void {
     this.myForm = new FormGroup({
@@ -341,21 +380,23 @@ console.log('gltf',gltf)
    
   });
 
-  this.myForm.controls['myControl'].valueChanges.subscribe(value => {
-    console.log(value);
-   // var temp:any = this.orgData
-    if(value){
-      this.valuechange('') 
-    }else{
+  // this.myForm.controls['myControl'].valueChanges.subscribe(value => {
+  //   console.log(value);
+  //  // var temp:any = this.orgData
+  //   if(value.length > 0){
+  //     this.valuechange(value) 
+  //   }else{
     
-    }
+  //   }
    
 
 //console.log(result);
-  });
+  //});
   
 
   }
+
+  
   searchName = '';
   ngAfterViewInit() {
 
@@ -381,56 +422,202 @@ console.log('gltf',gltf)
 
 
   }
+  
+
+  
+
+  fitCameraTo(boundingBox: THREE.Box3) {
+    const camera:any = this.camera;
+    const objPosition = boundingBox.getCenter(new THREE.Vector3());
+    const objSize = boundingBox.getSize(new THREE.Vector3());
+    boundingBox.min.y = 0;
+    boundingBox.max.y = 0;
+    const boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
+
+    let dim = boundingSphere.radius * 2;
+    if (dim < camera.near) {
+        dim = camera.near;
+    }
+
+    const direction = THREE.Object3D.DefaultUp.clone(); // view direction
+
+    // object angular size
+    const fov:any = THREE.MathUtils.degToRad(camera.fov);
+
+    let distance = dim / (2.0 * Math.tan(fov / 2.0));
+
+    if (camera.aspect <= 1) {
+        distance = distance / camera.aspect;            
+    }
+
+    if (distance < camera.near) {
+        distance = objSize.y;
+    }
+
+    if (distance < camera.near) {
+        distance = camera.near;
+    }
+
+    camera.position.copy(objPosition.clone().add(direction.multiplyScalar(distance)));
+
+    if (this.controls) {
+      this.controls.target.copy(objPosition); 
+     // this.controls.rotateLeft(Math.PI);                        
+    } else {
+        camera.lookAt(objPosition);
+    }
+
+    camera.updateProjectionMatrix();
+}
   valuechange(ev:any){
-    //console.log(ev)
+    console.log('ev',ev)
     console.log(this.searchName)
     console.log(this.teeth)
 
-  
+    if(this.searchName && this.searchName.length > 0){
+      
     console.log(this.teeth);
+   
 
+   
+
+
+
+
+    
+    //var found = this.teeth.find((element:any) => element.name == this.searchName);
+
+  var findIndex =   this.teeth.findIndex((element:any) => element.name == this.searchName)
+
+  if(findIndex != -1){
+
+
+    console.log(findIndex)
+    //this.teeth[findIndex] = 
+  //  console.log(found);
+  //  console.log(found.xLength, found.yLength, found.zLength)
+   //found =this.teeth[0].material.clone();
+  
+   var box = new THREE.BoxHelper(  this.teeth[findIndex] );
+   //var  currentTeeth =this.teeth[findIndex]
+   //found.material.emissive.setHex(0x00ff00);
+
+ 
+  
+   //.emissive.setHex(0xff0000);
+  this.currentObjDetail = this.teeth[findIndex] 
+  //this.camera.lookAt(this.teeth[findIndex].position)
+  this.controls.target = this.teeth[findIndex].position.clone();
+  
+  
+  // var fitcamera =new THREE.Box3().setFromObject(this.teeth[findIndex] ) 
+  // this.fitCameraTo(fitcamera)
+    this.scene.add( box );
+  
+    console.log('current obj',this.teeth[findIndex])
+    console.log('this.camera',this.camera);
+    console.log(this.scene)
+  
+    //console.log('this.myControl.value',this.myControl)
+    // this.treeControl.dataNodes.forEach((element:any)=>{
+    //   console.log('element.id ',element.id )
+    //   if(element.id == this.myControl.value){
+    //     element.isHighlight = true;
+  
+    //   }else{
+    //     element.isHighlight = false;
+    //   }
+    // })
+    this.highlightedTooth  = this.teeth[findIndex] 
+   // this.highlightedTooth.material.emissive.setHex(0x0ff00);
+    this.onDocumentMouseDown();
+    
+    // var centerX = this.teeth[findIndex].geometry.boundingSphere.center.x;
+    // var centerY = this.teeth[findIndex].geometry.boundingSphere.center.y;
+    // var centerZ = this.teeth[findIndex].geometry.boundingSphere.center.z;
+    
+    // //var position = { x: centerX, y: centerY, z: centerZ };
+    // this.camera.position.set(centerX, centerY, centerZ);
+
+    
+var centerX = this.teeth[findIndex].geometry.boundingBox.min.x;
+var centerY = this.teeth[findIndex].geometry.boundingBox.min.y;
+var centerZ = this.teeth[findIndex].geometry.boundingBox.min.z;
+
+this.camera.position.set(centerX, centerY, centerZ);
+  
+  
+  }else{
+
+
+
+    this.teeth.forEach((objdata:any,index:any) => {
+      objdata.material = this.backupdata[index].material;
+      
+    });
+
+
+
+    this.filteredData = this.teeth.filter((item:any) => item.name.indexOf(this.searchName) !== -1);
+
+    this.tree.treeControl.expandAll();
+
+  //  console.log('filter data',filteredData)
+     this.treeControl.dataNodes.forEach((element:any)=>{
+     // console.log('element.id ',element.id )
+
+      this.filteredData.forEach((filter:any)=>{
+      //  console.log('fiter',filter)
+        if(element.id == filter.id){
+        //  console.log(element.id,'======',filter.id)
+          element.isHighlight = true;
+    
+        }
+
+      })
+      
+    })
+
+   // console.log('copyOfData',this.copyOfData);
+   // this.teeth = this.copyOfData
     this.scene.children.forEach((sobj:any)=>{
       if(sobj.type == 'BoxHelper'){
 
         sobj.visible = false
       }
     })
+  
 
-    var found = this.teeth.find((element:any) => element.name == this.searchName);
+      this.filteredData.forEach((element:any) => {
+        var boxTy = new THREE.BoxHelper(element);
+       // element.material = this.selectedToothMaterial
+        element.material.emissive.setHex(0x0ff00);
+        this.scene.add( boxTy );
+      // this.onDocumentMouseDown();
+        
+      });
 
-  var findIndex =   this.teeth.findIndex((element:any) => element.name == this.searchName)
-  console.log(findIndex)
-  //this.teeth[findIndex] = 
- console.log(found);
- console.log(found.xLength, found.yLength, found.zLength)
- //found =this.teeth[0].material.clone();
 
- var box = new THREE.BoxHelper(  this.teeth[findIndex] );
- //var  currentTeeth =this.teeth[findIndex]
- //found.material.emissive.setHex(0x00ff00);
 
- //.emissive.setHex(0xff0000);
-this.currentObjDetail = this.teeth[findIndex] 
 
-	this.scene.add( box );
 
-  console.log('current obj',this.teeth[findIndex])
-  console.log(this.scene)
 
-  this.treeControl.dataNodes.forEach((element:any)=>{
-    if(element.id == this.myControl.value){
-      element.isHighlight = true;
 
-    }else{
-      element.isHighlight = false;
+
+
+
+
+  }
+
+
+
+
+
+
+
+
     }
-  })
-  this.highlightedTooth  = this.teeth[findIndex] 
-  this.onDocumentMouseDown();
-
-
-
-
+  
 
 
 
@@ -475,16 +662,31 @@ this.currentObjDetail = this.teeth[findIndex]
     _this.meshArray(_this.model);
 
  
-    //console.log(' _this.teeth', _this.teeth);
-    //console.log('  _this.backupdata',  _this.backupdata);
+    
+    // var found = this.teeth.find((element:any) => element.name == 'polySurface848_jeep_wrangler_aiStandardSurface4_0');
+    // _this.teeth =  []
+    // _this.backupdata =  []
+    // _this.teeth.push(found)
+    // _this.backupdata.push(found.clone())
+    // console.log(' _this.teeth', _this.teeth);
+    // console.log('  _this.backupdata',  _this.backupdata);
+    // this.emissiveData = _this.backupdata[0].material.emissive.getHex();
+
+
+    console.log(' this.emissiveData =====>', this.emissiveData )
+
+
     _this.teeth =  _this.teeth.filter((word:any) => word.name != 'pCylinder18_blinn18_0');
     _this.backupdata =  _this.backupdata.filter((word:any) => word.name != 'pCylinder18_blinn18_0');
+    
     this.toothMaterial = this.teeth[0].material;
     this.highlightedToothMaterial = this.teeth[0].material.clone();
-    this.highlightedToothMaterial.emissive.setHex(0xff00ff);//ping
-
-    this.selectedToothMaterial = this.teeth[0].material.clone();
-    this.selectedToothMaterial.emissive.setHex(0x0066ff);//blue
+     this.highlightedToothMaterial.emissive.setHex(0xff00ff);//ping
+    // this.highlightedToothMaterial.color.setHex(0xff00ff );
+ 
+     this.selectedToothMaterial = this.teeth[0].material.clone();
+     this.selectedToothMaterial.emissive.setHex(0x0066ff);//blue
+    // this.selectedToothMaterial.color.setHex(0x0066ff );
 
 
     this.teeth.forEach((tooth: any, index: any) => {
@@ -518,8 +720,10 @@ this.currentObjDetail = this.teeth[findIndex]
   meshArray(model: any) {
     var _this = this;
     if (model.type == "Mesh") {
+      model.material = model.material.clone()
       _this.teeth.push(model);
       _this.backupdata.push(model.clone());
+     
     } 
     model.children.forEach((l2: any) => {
       
@@ -537,7 +741,7 @@ this.currentObjDetail = this.teeth[findIndex]
      false
    );
    element.addEventListener(
-     "mousedown",
+     "click",
      (e:any) => this.onDocumentMouseDown(),
      false
    );
@@ -558,119 +762,104 @@ this.currentObjDetail = this.teeth[findIndex]
   onDocumentMouseMove(event: any) {
     event.preventDefault();
 
-  var elementhover:any = document.getElementById("jeepObjectId");
+    if(this.cursonTrueFalse == false){
+      var elementhover:any = document.getElementById("jeepObjectId");
       this.mouse.x = (event.clientX / elementhover.clientWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / elementhover.clientHeight) * 2 + 1;
-   // this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    //this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    //this.canvas.clientWidth, this.canvas.clientHeight
+    }
+    if(this.cursonTrueFalse == true){
+     // var elementhover:any = document.getElementById("jeepObjectId");
+      // this.mouse.x = (event.clientX / elementhover.clientWidth) * 2 - 1;
+      // this.mouse.y = -(event.clientY / elementhover.clientHeight) * 2 + 1;
+    }
+
   }
 
   onDocumentMouseDown() {
-    // console.log(this.backupdata)
-    // console.log(this.teeth)
-    // this.raycaster.setFromCamera(this.mouse, this.camera);
-
-    // const intersects:any = this.raycaster.intersectObjects(this.teeth);
-    // this.currentTooth= null;
-    // if (intersects.length) {
-    //   this.currentTooth = intersects[0].object as THREE.Mesh;
-    //  // currentTooth.material.color.set( Math.random() * 0xffffff );
-    //   console.log('currentTooth->',this.currentTooth);
-    //   this.scene.children.forEach((sobj:any)=>{
-    //     if(sobj.type == 'BoxHelper'){
-  
-    //       sobj.visible = false
-    //     }
-    //   });
+    if(this.cursonTrueFalse == false){
 
       
-    //   var box = new THREE.BoxHelper( this.currentTooth );
-    //   this.scene.add( box );
-    //      this.tree.treeControl.expandAll();
-
-    //      console.log( this.currentTooth.id)
-    //   console.log('this.treeControl',this.treeControl)
-
-    //   this.treeControl.dataNodes.forEach((element:any)=>{
-    //     if(element.id == this.currentTooth.id){
-    //       element.isHighlight = true;
-
-    //     }else{
-    //       element.isHighlight = false;
-    //     }
-    //   })
-
-    //   console.log('this.treeFlattener',this.treeFlattener)
-
-    //   console.log('data sourse',this.dataSource)
-
-      
-
-
-
-    // }
-
-
-    if (this.selectedTooth !== this.highlightedTooth) {
-      // this.selectedTooth && (this.selectedTooth.material = this.toothMaterial);
-      if (this.selectedTooth) {
-        var myData = this.backupdata.filter((data: any) => {
-          return data.name == this.selectedTooth.name;
-        });
-
-        this.selectedTooth.material = myData[0].material;
-
-   
-         
-   
-      }
-
-      
-      this.selectedTooth = this.highlightedTooth;
-      this.selectedTooth &&
-        (this.selectedTooth.material = this.selectedToothMaterial);
-
-
-        this.currentToothObj =  this.selectedTooth
-        this.currentObjDetail = this.selectedTooth
-        // currentTooth.material.color.set( Math.random() * 0xffffff );
-         console.log('currentTooth->',this.currentToothObj);
-         this.scene.children.forEach((sobj:any)=>{
-           if(sobj.type == 'BoxHelper'){
+    this.filteredData.forEach((element:any) => {
      
-             sobj.visible = false
-           }
+      // element.material = this.selectedToothMaterial
+       element.material.emissive.setHex(0);
+ 
+     })
+ 
+     this.teeth.forEach((objdata:any,index:any) => {
+       objdata.material = this.backupdata[index].material;
+       
+     });
+ 
+     if (this.selectedTooth !== this.highlightedTooth) {
+       // this.selectedTooth && (this.selectedTooth.material = this.toothMaterial);
+       if (this.selectedTooth) {
+         var myData = this.backupdata.filter((data: any) => {
+           return data.name == this.selectedTooth.name;
          });
-   
-         
-         var box = new THREE.BoxHelper( this.currentToothObj );
-         this.scene.add( box );
-            this.tree.treeControl.expandAll();
-   
-            console.log( this.currentToothObj.id)
-         console.log('this.treeControl',this.treeControl)
-   
-         this.treeControl.dataNodes.forEach((element:any)=>{
-           if(element.id == this.currentToothObj.id){
-             element.isHighlight = true;
-   
-           }else{
-             element.isHighlight = false;
-           }
-         })
-   
-         console.log('this.treeFlattener',this.treeFlattener)
-   
-         console.log('data sourse',this.dataSource)
-   
+ 
+         console.log('mouse click backup mydata',myData[0])
+         //this.selectedTooth.material = myData[0].material;
+        // myData[0].material.emissive.getHex()
+        this.selectedTooth.material.emissive.setHex(0); 
+          
+    
+       }
+ 
+       
+       this.selectedTooth = this.highlightedTooth;
+       this.selectedTooth &&
+         (this.selectedTooth.material.emissive.setHex(0x66a3ff))  //; = this.selectedToothMaterial);
+ 
+ 
+         this.currentToothObj =  this.selectedTooth
+         this.currentObjDetail = this.selectedTooth
+         // currentTooth.material.color.set( Math.random() * 0xffffff );
+          console.log('currentTooth->',this.currentToothObj);
+          this.scene.children.forEach((sobj:any)=>{
+            if(sobj.type == 'BoxHelper'){
+      
+              sobj.visible = false
+            }
+          });
+    
+          
+          var box = new THREE.BoxHelper( this.currentToothObj );
+          this.scene.add( box );
+          this.tree.treeControl.expandAll();
+    
+          console.log( this.currentToothObj.id)
+          console.log('this.treeControl',this.treeControl)
+    
+          this.treeControl.dataNodes.forEach((element:any)=>{
+            if(element.id == this.currentToothObj.id){
+              element.isHighlight = true;
+    
+            }else{
+              element.isHighlight = false;
+            }
+          })
+    
+          console.log('this.treeFlattener',this.treeFlattener)
+    
+          console.log('data sourse',this.dataSource)
+    
+ 
+ 
+ 
+     } else {
+       this.selectedTooth &&
+         (this.selectedTooth.material.emissive.setHex(0x00ff00));
+         // this.selectedTooth &&
+         // (this.selectedTooth.material = this.highlightedToothMaterial);
+       this.selectedTooth = null;
+     }
+ 
+      
+    
+    }
+    if(this.cursonTrueFalse == true){
 
-
-
-    } else {
-      this.selectedTooth &&
-        (this.selectedTooth.material = this.highlightedToothMaterial);
-      this.selectedTooth = null;
     }
   }
 
@@ -754,9 +943,12 @@ this.currentObjDetail = this.teeth[findIndex]
     this.update();
     this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
+    this.controlsGizmo.update();
   }
 
   update() {
+
+    
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -772,21 +964,30 @@ this.currentObjDetail = this.teeth[findIndex]
           var myData = this.backupdata.filter((data: any) => {
             return data.name == this.highlightedTooth.name;
           });
+          console.log('this.backupdata ====>',this.backupdata)
+          console.log('myData[0] ====>',myData[0])
+          console.log('this.highlightedTooth=>',this.highlightedTooth)
           // if(myData.length>0){
           // var meshStandardMaterial = myData[0].materials[0] as THREE.MeshStandardMaterial;
           // this.highlightedTooth.material = meshStandardMaterial
           // }
-          this.highlightedTooth.material = myData[0].material;
-          // this.highlightedTooth.material.emissive.setHex(0x0066ff);
+       // this.highlightedTooth.material = myData[0].material;
+          //this.highlightedTooth.material.emissive.setHex(myData[0].material.emissive.getHex()); //.material.color.getHex()
+           this.highlightedTooth.material.emissive.setHex(0);
           // this.highlightedTooth.material = this.toothMaterial;
         }
         if (this.highlightedTooth.children.length > 0) {
+
+       
+
           this.highlightedTooth.children[0]["visible"] = false;
         }
       }
       this.highlightedTooth = currentTooth;
       if (this.highlightedTooth) {
         if (this.selectedTooth !== this.highlightedTooth) {
+
+          
           // var myData = this.backupdata.filter((data:any) => {
           //   return data.name == this.highlightedTooth.name;
           // });
@@ -795,8 +996,13 @@ this.currentObjDetail = this.teeth[findIndex]
           //   this.highlightedTooth.material = meshStandardMaterial;
           // }
           // this.highlightedTooth.material = myData[0].material;
+          //
 
-          this.highlightedTooth.material = this.highlightedToothMaterial;
+          //
+
+         // this.highlightedTooth.material = this.highlightedToothMaterial;
+
+          this.highlightedTooth.material.emissive.setHex(0xff99cc);
         }
         if (this.highlightedTooth.children.length > 0) {
           this.highlightedTooth.children[0].visible = true;
@@ -808,6 +1014,11 @@ this.currentObjDetail = this.teeth[findIndex]
   focusObject(clickObj:any){
     console.log(clickObj);
     this.activeNode = clickObj
+
+    this.teeth.forEach((objdata:any,index:any) => {
+      objdata.material = this.backupdata[index].material;
+      
+    });
 
     console.log(this.teeth);
 
@@ -823,13 +1034,53 @@ this.currentObjDetail = this.teeth[findIndex]
   var findIndex =   this.teeth.findIndex((element:any) => element.id == clickObj.id)
   console.log(findIndex)
   //this.teeth[findIndex] = 
- console.log(found);
- console.log(found.xLength, found.yLength, found.zLength)
+//  console.log(found);
+//  console.log(found.xLength, found.yLength, found.zLength)
  //found =this.teeth[0].material.clone();
 
  var box = new THREE.BoxHelper(  this.teeth[findIndex] );
  //var  currentTeeth =this.teeth[findIndex]
- //found.material.emissive.setHex(0x00ff00);
+ //this.teeth[findIndex].material.emissive.setHex(0xff99c2);
+ //this.teeth[findIndex].material.color.setHex( 0xff99c2 )
+ //this.teeth[findIndex].material.color.setRGB (1, 0, 0);
+ //this.teeth[findIndex].material.color.set(0xff99c2);
+
+//  var tempmesh = this.teeth[findIndex].material.clone();
+//  tempmesh.emissive.setHex(0xff99c2);
+
+//  this.teeth[findIndex].material = tempmesh;
+ //this.teeth[findIndex].material.wireframe = true;
+//boundingBox
+//this.fitCameraTo(this.teeth[findIndex].geometry.boundingBox)
+ //this.camera.position.set(-4, -4, -5);
+var centerX = this.teeth[findIndex].geometry.boundingBox.min.x;
+var centerY = this.teeth[findIndex].geometry.boundingBox.min.y;
+var centerZ = this.teeth[findIndex].geometry.boundingBox.min.z;
+
+this.camera.position.set(centerX, centerY, centerZ);
+// var centerX = this.teeth[findIndex].geometry.boundingBox.max.x;
+// var centerY = this.teeth[findIndex].geometry.boundingBox.max.y;
+// var centerZ = this.teeth[findIndex].geometry.boundingBox.max.z;
+
+//  var centerX = this.teeth[findIndex].geometry.boundingSphere.center.x;
+//  var centerY = this.teeth[findIndex].geometry.boundingSphere.center.y;
+//  var centerZ = this.teeth[findIndex].geometry.boundingSphere.center.z;
+
+//var position = { x: centerX, y: centerY, z: centerZ };
+// centerX--;
+// centerY--;
+// centerZ--;
+// centerX--;
+// centerY--;
+// centerZ--;
+// centerX--;
+// centerY--;
+// centerZ--;
+// centerX--;
+// centerY--;
+// centerZ--;
+
+
 
  //.emissive.setHex(0xff0000);
 this.currentObjDetail = this.teeth[findIndex] 
@@ -848,6 +1099,7 @@ this.currentObjDetail = this.teeth[findIndex]
     }
   })
   this.highlightedTooth  = this.teeth[findIndex] 
+ // this.highlightedTooth.material.emissive.setHex(0x0ff00);
   this.onDocumentMouseDown();
 
   //this.teeth[findIndex].visible = false
@@ -868,6 +1120,7 @@ this.currentObjDetail = this.teeth[findIndex]
 
   }
 }
+
 
 
 export class OrbitControlsGizmo {

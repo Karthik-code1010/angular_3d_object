@@ -26,6 +26,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-size: 12px !important;
 }
 
+.hand_cursor{
+  position: absolute;
+  top: 10em;
+  right: 91em;
+  z-index: 1000;
+
+}
 
 
 .obit-controls-gizmo {

@@ -38,7 +38,7 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "src/assets/orbit/OrbitControlsGizmo.js"
+             
             ]
           },
           "configurations": {

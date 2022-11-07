@@ -11,18 +11,25 @@
                         <as-split direction="horizontal">
                             <as-split-area [size]="x1" [minSize]="minSize1">
                 
-                                <div id="jeepObjectId" style="height: 100%;width: 100%;display: block;">
+                                <div id="jeepObjectId" style="height: 100%;width: 100%;display: block;" >
                                     <canvas #canvas  id="canvas" style="height: 100%;width: 100%;display: block;"></canvas>
+                                </div>
+                                <div class="hand_cursor" (click)="enableMouseControl()">
+                                    
+                                    <mat-icon *ngIf="cursonTrueFalse == false" class="color-blue" style="font-size: 30px;color:rgb(213, 50, 148);">touch_app</mat-icon>
+                               
+                               <mat-icon *ngIf="cursonTrueFalse == true" class="color-blue" style="font-size: 30px;color:rgb(213, 50, 148);">mouse</mat-icon>
+                              
                                 </div>
                 
                             </as-split-area>
                             <as-split-area [size]="y1" style="margin-top: 5px">
                                 <div style="margin: 10px;">
-                                    <form class="example-form"  [formGroup]="myForm">
+                                    <form class="example-form" fxLayout="row" [formGroup]="myForm" >
                                         <mat-form-field style="width: 100%;" class="example-full-width" appearance="outline">
                                           <mat-label>Search</mat-label>
-                                          <mat-icon matSuffix class="color-blue">search</mat-icon>
-                                          <input type="text" matInput  [(ngModel)]="searchName" [formControl]="myControl" formControlName="myControl"  (change)="valuechange($event)"   (click)="valuechange($event)" >
+                                        
+                                          <input type="text" matInput  [(ngModel)]="searchName" [formControl]="myControl" formControlName="myControl"  (change)="valuechange($event)"    >
                                           <!-- 
                                             [matAutocomplete]="auto"
                                             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -31,6 +38,12 @@
                                             </mat-option>
                                           </mat-autocomplete> -->
                                         </mat-form-field>
+                                        <button (click)="valuechange($event)" mat-raised-button color="primary" style="height: 58px !important;
+                                        margin-top: 4px !important;
+                                        border-radius: 0px !important;
+                                        border-radius: 3px 3px 3px 3px !important;">
+                                            
+                                            <mat-icon class="color-blue">search</mat-icon></button>
                                       </form>
                                 </div>
                                 <div style="margin-top: -20px;">
@@ -77,7 +90,17 @@
                                 
                                 
                                         </mat-tab>
-                                        <mat-tab label="TAB 2"> Content 2 </mat-tab>
+                                        <mat-tab label="TAB 2"> 
+                                            <div style="margin-top: 14px;margin-left: 10px;">
+                                                Selected Name
+                                            </div>
+                                            
+                                            <mat-list role="list" *ngIf="filteredData.length > 0">
+                                                <mat-list-item style="font-size: 13px;margin-top:-14px;" role="listitem" *ngFor="let fil of filteredData">
+                                                    {{fil.name}}</mat-list-item>
+                                              
+                                              </mat-list>
+                                        </mat-tab>
                                         <mat-tab label="TAB 3"> Content 3 </mat-tab>
                                       </mat-tab-group>
                                 
