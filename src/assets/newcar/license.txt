@@ -1,0 +1,11 @@
+Model Information:
+* title:	Maserati Quattroporte
+* source:	https://sketchfab.com/3d-models/maserati-quattroporte-62c74114a86d4384825a94b1a8d31deb
+* author:	DAVID.3D.ART (https://sketchfab.com/mr.rip)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Maserati Quattroporte" (https://sketchfab.com/3d-models/maserati-quattroporte-62c74114a86d4384825a94b1a8d31deb) by DAVID.3D.ART (https://sketchfab.com/mr.rip) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
