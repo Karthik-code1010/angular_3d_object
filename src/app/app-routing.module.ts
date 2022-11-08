@@ -8,6 +8,8 @@ import { JeepObjectComponent } from './jeep-object/jeep-object.component';
 import { MachineModelComponent } from './machine-model/machine-model.component';
 import { ModelAxisComponent } from './model-axis/model-axis.component';
 import { ModelComponent } from './model/model.component';
+import { NewCarComponent } from './new-car/new-car.component';
+import { NewCityComponent } from './new-city/new-city.component';
 
 const routes: Routes = [
   {
@@ -40,6 +42,12 @@ const routes: Routes = [
   },{
     path:"model_axis",
     component:ModelAxisComponent
+  },{
+    path:"newcar",
+    component:NewCarComponent
+  },{
+    path:"newcity",
+    component:NewCityComponent
   }
 ];
 

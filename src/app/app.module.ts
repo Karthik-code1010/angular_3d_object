@@ -16,6 +16,8 @@ import { AngularSplitModule } from 'angular-split';
 import { MachineModelComponent } from './machine-model/machine-model.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ModelAxisComponent } from './model-axis/model-axis.component';
+import { NewCarComponent } from './new-car/new-car.component';
+import { NewCityComponent } from './new-city/new-city.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +28,9 @@ import { ModelAxisComponent } from './model-axis/model-axis.component';
     JeepHoverComponent,
     FinalJeepComponent,
     MachineModelComponent,
-    ModelAxisComponent
+    ModelAxisComponent,
+    NewCarComponent,
+    NewCityComponent
   ],
   imports: [
     ReactiveFormsModule,
