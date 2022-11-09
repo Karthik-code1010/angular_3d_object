@@ -591,7 +591,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       this.filteredData.forEach((element:any) => {
         var boxTy = new THREE.BoxHelper(element);
        // element.material = this.selectedToothMaterial
-        element.material.emissive.setHex(0x0ff00);
+        element.material.emissive.setHex(0x66a3ff);
         this.scene.add( boxTy );
       // this.onDocumentMouseDown();
         
@@ -849,7 +849,7 @@ this.camera.position.set(centerX, centerY, centerZ);
  
      } else {
        this.selectedTooth &&
-         (this.selectedTooth.material.emissive.setHex(0x00ff00));
+         (this.selectedTooth.material.emissive.setHex(0x66a3ff));
          // this.selectedTooth &&
          // (this.selectedTooth.material = this.highlightedToothMaterial);
        this.selectedTooth = null;

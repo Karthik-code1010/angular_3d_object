@@ -13,6 +13,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { OrbitControlsGizmo } from './OrbitControlsGizmo';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 //import { OrbitControls } from './OrbitControls';
 //import { OrbitControlsGizmo } from './OrbitControlsGizmo';
 //import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
@@ -126,7 +129,10 @@ export class NewCarComponent implements OnInit, AfterViewInit {
 
   //* Stage Properties
 
-  @Input() public fieldOfView: number = 30;
+  @Input() public fieldOfView: number = 1;
+  //new car
+ // @Input() public fieldOfView: number = 30;
+
  //@Input() public fieldOfView: number = 50;
   @Input('nearClipping') public nearClippingPane: number = 1;
  //@Input('nearClipping') public nearClippingPane: number = 1;
@@ -157,6 +163,12 @@ private  controlsGizmo: any;
   //copyOfData: any = [];
   filteredData:any = [];
   emissiveData: any;
+  outlinePass: OutlinePass;
+  selectedObjects:any = [];
+  compose: EffectComposer;
+  renderPass: RenderPass;
+
+
 
   //? Helper Properties (Private Properties);
 
@@ -189,11 +201,45 @@ private  controlsGizmo: any;
    * @memberof ModelComponent
    */
   private createControls = () => {
-    const renderer = new CSS2DRenderer();
+    const renderer:any = new CSS2DRenderer();
     renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0px';
+    
 
+    const renderTarget = new THREE.WebGLRenderTarget(
+      1000,
+      600,
+      {
+          minFilter: THREE.LinearFilter,
+          magFilter: THREE.LinearFilter,
+          format: THREE.RGBAFormat,
+          encoding: THREE.sRGBEncoding
+      }
+  )
+       this.compose = new EffectComposer(renderer ,renderTarget);
+       this.compose.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+       this.compose.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
+
+       
+      this.renderPass = new RenderPass(this.scene, this.camera);
+      this.outlinePass = new OutlinePass( new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight ), this.scene, this.camera );
+			//	composer.addPass( this.outlinePass );
+   
+      this.outlinePass.renderToScreen = true;
+        this.outlinePass.edgeStrength =  3;
+        this.outlinePass.edgeGlow = Number( 0.5 );
+        this.outlinePass.edgeThickness = Number( 8 );
+        this.outlinePass.pulsePeriod = Number( 1 );
+       // this.outlinePass.usePatternTexture = true;
+       this.outlinePass.visibleEdgeColor.set(0xff0000);
+         this.outlinePass.hiddenEdgeColor.set(0x190a05);
+      //  this.outlinePass.visibleEdgeColor.set( new THREE.Color(0xff0000));
+      //  this.outlinePass.hiddenEdgeColor.set( new THREE.Color(0x190a05));
+
+      console.log(' this.outlinePass', this.outlinePass);
+      this.compose.addPass(this.renderPass);
+      this.compose.addPass(this.outlinePass);
     //const element:any = document.getElementById("jeepObjectId");
     this.elementDiv  = document.querySelector('#jeepObjectId');
     this.elementDiv.appendChild(renderer.domElement);
@@ -247,6 +293,12 @@ private  controlsGizmo: any;
 
 
   };
+  addSelectedObject( object:any ) {
+
+    this.selectedObjects = [];
+    this.selectedObjects.push( object );
+
+  }
 
   cursonTrueFalse:boolean = false;
 
@@ -287,7 +339,7 @@ private  controlsGizmo: any;
     //* Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xd4d4d8)
-    this.loaderGLTF.load('assets/newcar/scene.gltf', (gltf: GLTF) => {
+    this.loaderGLTF.load('assets/robot/scene.gltf', (gltf: GLTF) => {
 console.log('gltf',gltf)
       // this.model = gltf.scene.children[0];
       this.model = gltf.scene;
@@ -690,11 +742,26 @@ this.camera.position.set(centerX, centerY, centerZ);
 
 
     this.teeth.forEach((tooth: any, index: any) => {
+
+      console.log('tooth',tooth)
+
+      // const addCircle = document.createElement("div");
+      // addCircle.classList.add("addCircle");
+      // addCircle.textContent = ''
+   
+      var img = document.createElement('img');
+      img.src = "../../assets/lipid.png";
+      img.setAttribute("height", "20");
+      img.setAttribute("width", "20");
+
       const labelDiv = document.createElement("div");
       labelDiv.classList.add("tooth-label");
       const num = parseInt(tooth.name);
 
       // labelDiv.innerHTML = "A computer science portal for geeks.";
+
+    
+
 
       const numSpan = document.createElement("span");
       numSpan.textContent = index.toString();
@@ -705,10 +772,16 @@ this.camera.position.set(centerX, centerY, centerZ);
       nameSpan.textContent = tooth.name.replace(/_/g, " ").replace(index, "");
       // nameSpan.textContent = "Mirror".replace(/_/g, " ");
       labelDiv.append(nameSpan);
+     // labelDiv.append(addCircle);
       const label = new CSS2DObject(labelDiv);
       label.position.set(0, 0, 0);
       label.visible = false;
       tooth.add(label);
+
+      const label2 = new CSS2DObject(img);  
+      label2.position.set(tooth.geometry.boundingBox.min.x, tooth.geometry.boundingBox.min.y, tooth.geometry.boundingBox.min.z);
+      label2.visible = true;
+      tooth.add(label2);
     });
 
     console.log(this.teeth);
@@ -849,7 +922,7 @@ this.camera.position.set(centerX, centerY, centerZ);
  
      } else {
        this.selectedTooth &&
-         (this.selectedTooth.material.emissive.setHex(0x00ff00));
+         (this.selectedTooth.material.emissive.setHex(0x66a3ff));
          // this.selectedTooth &&
          // (this.selectedTooth.material = this.highlightedToothMaterial);
        this.selectedTooth = null;
@@ -944,6 +1017,7 @@ this.camera.position.set(centerX, centerY, centerZ);
     this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
     this.controlsGizmo.update();
+  // this.compose.render();
   }
 
   update() {
@@ -981,6 +1055,7 @@ this.camera.position.set(centerX, centerY, centerZ);
        
 
           this.highlightedTooth.children[0]["visible"] = false;
+         // this.outlinePass.selectedObjects = [];
         }
       }
       this.highlightedTooth = currentTooth;
@@ -1003,6 +1078,14 @@ this.camera.position.set(centerX, centerY, centerZ);
          // this.highlightedTooth.material = this.highlightedToothMaterial;
 
           this.highlightedTooth.material.emissive.setHex(0xff99cc);
+
+          this.addSelectedObject( this.highlightedTooth );
+					this.outlinePass.selectedObjects = this.selectedObjects 
+        // this.outlinePass.selectedObjects.push( this.highlightedTooth)
+         //this.outlinePass.selectedObjects =[this.highlightedTooth];
+            console.log(this.selectedObjects)
+            console.log('this.outlinePass',this.outlinePass)
+
         }
         if (this.highlightedTooth.children.length > 0) {
           this.highlightedTooth.children[0].visible = true;
@@ -1053,6 +1136,10 @@ this.camera.position.set(centerX, centerY, centerZ);
 //boundingBox
 //this.fitCameraTo(this.teeth[findIndex].geometry.boundingBox)
  //this.camera.position.set(-4, -4, -5);
+//  var boxe:any = new THREE.Box3().setFromObject(this.teeth[findIndex]);
+// boxe.center(this.teeth[findIndex].position);
+// this.teeth[findIndex].localToWorld(boxe);
+// this.teeth[findIndex].position.multiplyScalar(-1);
 
 // var centerX = this.teeth[findIndex].geometry.boundingBox.max.x;
 // var centerY = this.teeth[findIndex].geometry.boundingBox.max.y;
@@ -1061,11 +1148,13 @@ this.camera.position.set(centerX, centerY, centerZ);
 //  var centerX = this.teeth[findIndex].geometry.boundingSphere.center.x;
 //  var centerY = this.teeth[findIndex].geometry.boundingSphere.center.y;
 // var centerZ = this.teeth[findIndex].geometry.boundingSphere.center.z;
+
 var centerX = this.teeth[findIndex].geometry.boundingBox.min.x;
 var centerY = this.teeth[findIndex].geometry.boundingBox.min.y;
 var centerZ = this.teeth[findIndex].geometry.boundingBox.min.z;
 
 this.camera.position.set(centerX, centerY, centerZ);
+
 //var position = { x: centerX, y: centerY, z: centerZ };
 // centerX--;
 // centerY--;

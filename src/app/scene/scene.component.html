@@ -1,0 +1,14 @@
+<canvas #scene_id id="scene_id" style="height: 100vh; width: 100vw;"></canvas>
+
+<div style="display: flex;top: 20px;z-index: 1000;
+            left: 20px; position: absolute; width: 0;background-size: auto;
+            background-repeat: round;
+            right: 0;bottom: 0;object-fit: fill;">
+    <mat-icon (click)="changeObject()" style="cursor: pointer;">filter</mat-icon>
+</div>
+<div #annotation id="annotation" class="annotation">
+    <p><strong>Cube</strong></p>
+    <p>In geometry, a cube is a three-dimensional solid object bounded by six square faces, facets or sides, with three
+        meeting at each vertex.</p>
+</div>
+<canvas id="number" width="64" height="64"></canvas>

@@ -25,6 +25,7 @@
     "@types/three": "^0.131.0",
     "angular-split": "^5.0.0",
     "dat.gui": "^0.7.9",
+    "gsap": "^3.11.3",
     "rxjs": "~6.6.0",
     "three": "^0.132.2",
     "three-orientation-gizmo": "^1.1.0",

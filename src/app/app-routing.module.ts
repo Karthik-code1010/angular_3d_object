@@ -10,6 +10,8 @@ import { ModelAxisComponent } from './model-axis/model-axis.component';
 import { ModelComponent } from './model/model.component';
 import { NewCarComponent } from './new-car/new-car.component';
 import { NewCityComponent } from './new-city/new-city.component';
+import { ParkingComponent } from './parking/parking.component';
+import { SceneComponent } from './scene/scene.component';
 
 const routes: Routes = [
   {
@@ -48,6 +50,13 @@ const routes: Routes = [
   },{
     path:"newcity",
     component:NewCityComponent
+  },
+  {
+    path:'scene',
+    component:SceneComponent
+  },{
+    path:'parking',
+    component:ParkingComponent
   }
 ];
 
