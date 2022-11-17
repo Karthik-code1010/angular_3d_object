@@ -7,12 +7,19 @@ import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRe
 
 import {FlatTreeControl} from '@angular/cdk/tree';
 
-
+import Stats from 'three/examples/jsm/libs/stats.module'
+//import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
+const TWEEN = require('@tweenjs/tween.js')
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { OrbitControlsGizmo } from './OrbitControlsGizmo';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { FontLoader, TextGeometry, TextureLoader } from 'three';
+import { CSS3DObject } from 'three-css3d';
 //import { OrbitControls } from './OrbitControls';
 //import { OrbitControlsGizmo } from './OrbitControlsGizmo';
 //import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
@@ -114,7 +121,7 @@ export class NewCityComponent implements OnInit, AfterViewInit {
   //update
   raycaster = new THREE.Raycaster();
 
-
+  
   teeth: any = []; //
 
 
@@ -126,12 +133,14 @@ export class NewCityComponent implements OnInit, AfterViewInit {
 
   //* Stage Properties
 
+ 
   @Input() public fieldOfView: number = 30;
  //@Input() public fieldOfView: number = 50;
   @Input('nearClipping') public nearClippingPane: number = 1;
  //@Input('nearClipping') public nearClippingPane: number = 1;
   @Input('farClipping') public farClippingPane: number = 1000;
  //@Input('farClipping') public farClippingPane: number = 1000;
+  //? Scene properties
   //? Scene properties
   private camera: THREE.PerspectiveCamera;  //new THREE.PerspectiveCamera(70, 2, 1, 1000);
 
@@ -157,6 +166,17 @@ private  controlsGizmo: any;
   //copyOfData: any = [];
   filteredData:any = [];
   emissiveData: any;
+  outlinePass: OutlinePass;
+  selectedObjects:any = [];
+  compose: EffectComposer;
+  renderPass: RenderPass;
+  rootDiv: HTMLDivElement;
+  label2: CSS2DObject;
+  position: THREE.Vector3;
+  labelTooth: any;
+  meshHtml: any = [];
+
+
 
   //? Helper Properties (Private Properties);
 
@@ -169,7 +189,64 @@ private  controlsGizmo: any;
   private renderer: THREE.WebGLRenderer;
 
   private scene: THREE.Scene;
+  //tempV = new THREE.Vector3();
 
+stats = Stats();
+
+annotations: any = [
+  {
+    "title": "jeep tier",
+    "description": "<p>MRF tier is very strong</p>",
+    "camPos": {
+      x: -1.5326006412506104, y: 1.9576284885406494, z: -1.481367588043213
+      
+    },
+    "lookAt": {
+      x: -2.9965999126434326, y: 0.9942384772002697, z: 0.4439733028411865
+    }
+  },
+  {
+    "title": "aiCarPaint1_0",
+    "camPos": {
+      x: 1.8106138706207275, y: 4.020437240600586, z: 4.163206100463867 
+      ​​​
+    
+    },
+    "lookAt": {
+      x:-1.1920928955078125e-7, y: 2.651298761367798, z: 0.1529315710067749
+    }
+  },
+  {
+    "title": "blinn5_0",
+    "description": "Keeps you warm in winter.",
+    "camPos": {
+      x: 2.243914842605591, y: 4.089898109436035, z: 4.79563045501709
+​​​
+     
+    },
+    "lookAt": {
+      x: 0, y: 2.587713360786438, z: 0.23995208740234375
+    }
+  },
+  {
+    "title": "iStandardSurface",
+    "camPos": {
+      x: -1.5703625679016113, y: 1.9565846920013428, z: 3.9728970527648926
+      ​​​
+    
+    },
+    "lookAt": {
+      x: -2.027032971382141, y: 0.9929567081853747, z: 3.0092692375183105
+    }
+  }
+]
+ pos = new THREE.Vector3(2, 0.5, 0);
+ normal = new THREE.Vector3(1, 0, 0);
+
+ cNormal = new THREE.Vector3();
+ cPos = new THREE.Vector3();
+ m4 = new THREE.Matrix4();
+ 
   /**
    *Animate the model
    *
@@ -189,15 +266,54 @@ private  controlsGizmo: any;
    * @memberof ModelComponent
    */
   private createControls = () => {
-    const renderer = new CSS2DRenderer();
+
+   
+ 
+    const renderer:any = new CSS2DRenderer();
     renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0px';
 
+    
+    
+
+    const renderTarget = new THREE.WebGLRenderTarget(
+      1000,
+      600,
+      {
+          minFilter: THREE.LinearFilter,
+          magFilter: THREE.LinearFilter,
+          format: THREE.RGBAFormat,
+          encoding: THREE.sRGBEncoding
+      }
+  )
+       this.compose = new EffectComposer(renderer ,renderTarget);
+       this.compose.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+       this.compose.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
+
+       
+      this.renderPass = new RenderPass(this.scene, this.camera);
+      this.outlinePass = new OutlinePass( new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight ), this.scene, this.camera );
+			//	composer.addPass( this.outlinePass );
+   
+      this.outlinePass.renderToScreen = true;
+        this.outlinePass.edgeStrength =  3;
+        this.outlinePass.edgeGlow = Number( 0.5 );
+        this.outlinePass.edgeThickness = Number( 8 );
+        this.outlinePass.pulsePeriod = Number( 1 );
+       // this.outlinePass.usePatternTexture = true;
+       this.outlinePass.visibleEdgeColor.set(0xff0000);
+         this.outlinePass.hiddenEdgeColor.set(0x190a05);
+      //  this.outlinePass.visibleEdgeColor.set( new THREE.Color(0xff0000));
+      //  this.outlinePass.hiddenEdgeColor.set( new THREE.Color(0x190a05));
+
+      console.log(' this.outlinePass', this.outlinePass);
+      this.compose.addPass(this.renderPass);
+      this.compose.addPass(this.outlinePass);
     //const element:any = document.getElementById("jeepObjectId");
     this.elementDiv  = document.querySelector('#jeepObjectId');
     this.elementDiv.appendChild(renderer.domElement);
-   
+  //  this.elementDiv.appendChild(this.stats.dom);
     this.controls = new OrbitControls(this.camera, renderer.domElement);
     console.log('this.controls ==2>',this.controls)
     // const helper = new THREE.CameraHelper( this.camera );
@@ -247,6 +363,12 @@ private  controlsGizmo: any;
 
 
   };
+  addSelectedObject( object:any ) {
+
+    this.selectedObjects = [];
+    this.selectedObjects.push( object );
+
+  }
 
   cursonTrueFalse:boolean = false;
 
@@ -419,7 +541,7 @@ console.log('gltf',gltf)
 
 
     this.animate();
-
+   // this.camera.position.set(-4, 5, 5);
 
   }
   
@@ -622,6 +744,36 @@ this.camera.position.set(centerX, centerY, centerZ);
 
 
   }
+  gotoIconCLick(iconVal:any){
+
+    console.log('iconVal',iconVal);
+  //   const annotationDiv = document.createElement('div')
+  //   annotationDiv.className = 'annotationLabel'
+  //   annotationDiv.innerHTML = '1';
+  //   const annotationLabel = new CSS2DObject(annotationDiv)
+  //   annotationLabel.position.set(tooth.geometry.boundingBox.min.x, tooth.geometry.boundingBox.min.y, tooth.geometry.boundingBox.min.z);
+  //  // scene.add(annotationLabel)
+  //   this.scene.add( annotationLabel );
+
+  //   if (this.annotations[a].description) {
+  //       const annotationDescriptionDiv = document.createElement('div')
+  //       annotationDescriptionDiv.className = 'annotationDescription'
+  //       annotationDescriptionDiv.innerHTML = this.annotations[a].description
+  //       annotationDiv.appendChild(annotationDescriptionDiv)
+  //       this.annotations[a].descriptionDomElement = annotationDescriptionDiv
+  //   }
+
+  }
+
+   tempV = new THREE.Vector3();
+   cameraToPoint = new THREE.Vector3();
+   cameraPosition = new THREE.Vector3();
+   normalMatrix = new THREE.Matrix3();
+
+   settings = {
+    minArea: 20,
+    maxVisibleDot: -0.2,
+  };
 
   materialFun() {
 
@@ -675,7 +827,7 @@ this.camera.position.set(centerX, centerY, centerZ);
 
     console.log(' this.emissiveData =====>', this.emissiveData )
 
-
+    const circleTexture = new THREE.TextureLoader().load('../../assets/circle.png')
     _this.teeth =  _this.teeth.filter((word:any) => word.name != 'pCylinder18_blinn18_0');
     _this.backupdata =  _this.backupdata.filter((word:any) => word.name != 'pCylinder18_blinn18_0');
     
@@ -687,14 +839,45 @@ this.camera.position.set(centerX, centerY, centerZ);
      this.selectedToothMaterial = this.teeth[0].material.clone();
      this.selectedToothMaterial.emissive.setHex(0x0066ff);//blue
     // this.selectedToothMaterial.color.setHex(0x0066ff );
-
+    const labelContainerElem:any = document.querySelector('#annotationsPanel');
 
     this.teeth.forEach((tooth: any, index: any) => {
+
+      // tooth.material.transparent = true
+      // tooth.material.opacity = 0.2
+      // tooth.material.depthWrite = false
+
+      console.log('tooth',tooth)
+
+      // const addCircle = document.createElement("div");
+      // addCircle.classList.add("addCircle");
+      // addCircle.textContent = ''
+
+
+      //annotationsPanel
+
+
+      var img = document.createElement('img');
+      img.src = "../../assets/lipid.png";
+      img.setAttribute("height", "16");
+      img.setAttribute("width", "16");
+   
+      img.addEventListener('click',  ()=> {
+        this.gotoIconCLick(tooth)
+    })
+    
+    this.rootDiv = document.createElement("div");
+    this.rootDiv.classList.add("request-loader");
+    this.rootDiv.append(img);
+
       const labelDiv = document.createElement("div");
       labelDiv.classList.add("tooth-label");
       const num = parseInt(tooth.name);
 
       // labelDiv.innerHTML = "A computer science portal for geeks.";
+
+    
+
 
       const numSpan = document.createElement("span");
       numSpan.textContent = index.toString();
@@ -705,16 +888,292 @@ this.camera.position.set(centerX, centerY, centerZ);
       nameSpan.textContent = tooth.name.replace(/_/g, " ").replace(index, "");
       // nameSpan.textContent = "Mirror".replace(/_/g, " ");
       labelDiv.append(nameSpan);
+     // labelDiv.append(addCircle);
       const label = new CSS2DObject(labelDiv);
       label.position.set(0, 0, 0);
       label.visible = false;
       tooth.add(label);
+  if(tooth.name == 'Object_88' || tooth.name ==  'Object_25'|| tooth.name == 'Object_11')
+
+  {
+    //labelContainerElem
+    var img = document.createElement('img');
+    img.src = "../../assets/lipid.png";
+    img.setAttribute("height", "16");
+    img.setAttribute("width", "16");
+ 
+    img.addEventListener('click',  ()=> {
+     console.log('icon click')
+  })
+
+    const elem = document.createElement('div');
+   // elem.textContent = name;
+    elem.appendChild(img);
+    elem.classList.add("request-loader");
+    labelContainerElem.appendChild(elem);
+
+    this.meshHtml.push({tooth,elem});
+   
+
+    // this.labelTooth = tooth
+
+    // const lonFudge = Math.PI * 1.5;
+    // const latFudge = Math.PI;
+    // // these helpers will make it easy to position the boxes
+    // // We can rotate the lon helper on its Y axis to the longitude
+    // const lonHelper = new THREE.Object3D();
+    // // We rotate the latHelper on its X axis to the latitude
+    // const latHelper = new THREE.Object3D();
+    // lonHelper.add(latHelper);
+    // // The position helper moves the object to the edge of the sphere
+    // const positionHelper = new THREE.Object3D();
+    // positionHelper.position.z = 1;
+    // latHelper.add(positionHelper);
+
+
+    //      // get the position of the lat/lon
+    //      positionHelper.updateWorldMatrix(true, false);
+    //      this.position = new THREE.Vector3();
+    //      positionHelper.getWorldPosition(this.position);
+
+
+    //tooth.updateWorldMatrix(true, false);
+   // tooth.getWorldPosition(this.tempV);
+
+    // get the normalized screen coordinate of that position
+    // x and y will be in the -1 to +1 range with x = -1 being
+    // on the left and y = -1 being on the bottom
+   // this.tempV.project(this.camera);
+   
+    
+   // this.label2 = new CSS2DObject(this.rootDiv);  
+   //this.label2  = new CSS3DObject( this.rootDiv );
+   // this.label2.position.set(tooth.geometry.boundingSphere.center.x, tooth.geometry.boundingSphere.center.y, tooth.geometry.boundingSphere.center.z);
+    
+    //radius
+   // label2.position.set(tooth.geometry.boundingSphere.center.x, -2 * tooth.geometry.boundingSphere.radius, tooth.geometry.boundingSphere.center.z);
+    
+    //this.label2.visible = true;
+   // label2.rotation.set(tooth.geometry.boundingSphere.center.x, tooth.geometry.boundingSphere.center.y, tooth.geometry.boundingSphere.center.z);
+   
+    //tooth.material.map = label2;
+    //tooth.material.map.needsUpdate = true
+    //tooth.add(this.label2);
+    //  tooth.material.side = THREE.DoubleSide,
+    //  tooth.material.transparent = true,
+    //  tooth.material.opacity= 0.2,
+    //  tooth.material.depthFunc= THREE.LessDepth
+    //tooth.geometry.groups.push(label2)
+    //tooth.material.emissiveMap = label2
+   // label2.layers.set(0);
+    //this.label2.rotation.y = Math.PI * 0.5;
+    //this.label2.scale.set(0.025, 0.025, 1);
+    //label2.rotation.set(tooth.geometry.boundingBox.min.x, tooth.geometry.boundingBox.min.y, tooth.geometry.boundingBox.min.z);
+    
+      //this.camera.position.set(tooth.geometry.boundingBox.min.x, tooth.geometry.boundingBox.min.y, tooth.geometry.boundingBox.min.z);
+    
+
+    //console.log('label2',this.label2);
+    //console.log('tooth label2',tooth)
+
+//     const textureLoader = new TextureLoader();
+
+// // load a texture
+// const texture = textureLoader.load(
+// '../../assets/lipid.png',
+// );
+// tooth.material.map = texture;
+
+ }
+     
     });
 
-    console.log(this.teeth);
-    console.log(this.scene);
+  //  const annotationMarkers: THREE.Sprite[] = []
+//    console.log(this.teeth);
+  //  console.log(this.scene);
    // this.options = this.teeth
+
+  
+//   //  const annotationsDownload = new XMLHttpRequest()
+//   //  annotationsDownload.open('GET', '/annotations.json')
+//   //  annotationsDownload.onreadystatechange = function () {
+//   //      if (annotationsDownload.readyState === 4) {
+//           // this.annotations = JSON.parse(annotationsDownload.responseText)
+
+//            const annotationsPanel = document.getElementById(
+//                'annotationsPanel'
+//            ) as HTMLDivElement
+//            const ul = document.createElement('ul') as HTMLUListElement
+//            const ulElem = annotationsPanel.appendChild(ul)
+//            Object.keys(this.annotations).forEach((a) => {
+
+//             console.log('a=>',a)
+//             console.log('this.annotations',this.annotations)
+//                const li = document.createElement('li') as HTMLLIElement
+//                const liElem = ulElem.appendChild(li)
+//                const button = document.createElement('button') as HTMLButtonElement
+//                button.innerHTML = a + ' : ' + this.annotations[a].title
+//                button.className = 'annotationButton'
+//                button.addEventListener('click',  ()=> {
+//                    this.gotoAnnotation(this.annotations[a])
+//                })
+//                liElem.appendChild(button)
+
+//                const annotationSpriteMaterial = new THREE.SpriteMaterial({
+//                    map: circleTexture,
+//                    depthTest: false,
+//                    depthWrite: false,
+//                    sizeAttenuation: false,
+//                })
+
+//                console.log('annotationSpriteMaterial',annotationSpriteMaterial)
+//                const annotationSprite = new THREE.Sprite(annotationSpriteMaterial)
+
+
+
+//                annotationSprite.scale.set(0.0015, 0.0015, 0.0015)
+//                annotationSprite.position.copy(this.annotations[a].lookAt)
+//                annotationSprite.userData.id = a
+//                this.scene.add(annotationSprite)
+//                annotationMarkers.push(annotationSprite)
+//                console.log('annotationSprite',annotationSprite)
+
+//                const annotationDiv = document.createElement('div')
+//                annotationDiv.className = 'annotationLabel'
+//                annotationDiv.innerHTML = a
+//                const annotationLabel = new CSS2DObject(annotationDiv)
+//                annotationLabel.position.copy(this.annotations[a].lookAt)
+//               // scene.add(annotationLabel)
+//                this.scene.add( annotationLabel );
+
+//                if (this.annotations[a].description) {
+//                    const annotationDescriptionDiv = document.createElement('div')
+//                    annotationDescriptionDiv.className = 'annotationDescription'
+//                    annotationDescriptionDiv.innerHTML = this.annotations[a].description
+//                    annotationDiv.appendChild(annotationDescriptionDiv)
+//                    this.annotations[a].descriptionDomElement = annotationDescriptionDiv
+//                }
+//            })
+//           // progressBar.style.display = 'none'
+//        //}
+//  //  }
+//   // annotationsDownload.send()
+
+   
   }
+
+
+
+ updateLabels() {
+    // if (!countryInfos) {
+    //   return;
+    // }
+    const area = this.canvas.clientWidth * this.canvas.clientHeight
+    const large = this.settings.minArea * this.settings.minArea;
+    // get a matrix that represents a relative orientation of the camera
+    this.normalMatrix.getNormalMatrix(this.camera.matrixWorldInverse);
+    // get the camera's position
+    this.camera.getWorldPosition(this.cameraPosition);
+    // for (const countryInfo of countryInfos) {
+    //   const {position, elem, area} = countryInfo;
+      // large enough?
+      if (area < large) {
+        // elem.style.display = 'none';
+        // continue;
+
+       // this.label2.visible = false
+      }else{
+        //this.label2.visible = true
+      }
+
+      // Orient the position based on the camera's orientation.
+      // Since the sphere is at the origin and the sphere is a unit sphere
+      // this gives us a camera relative direction vector for the position.
+      this.tempV.copy(this.position);
+      this.tempV.applyMatrix3(this.normalMatrix);
+
+      // compute the direction to this position from the camera
+      this.cameraToPoint.copy(this.position);
+      this.cameraToPoint.applyMatrix4(this.camera.matrixWorldInverse).normalize();
+
+      // get the dot product of camera relative direction to this position
+      // on the globe with the direction from the camera to that point.
+      // -1 = facing directly towards the camera
+      // 0 = exactly on tangent of the sphere from the camera
+      // > 0 = facing away
+      const dot = this.tempV.dot(this.cameraToPoint);
+
+      // if the orientation is not facing us hide it.
+      if (dot > this.settings.maxVisibleDot) {
+        // elem.style.display = 'none';
+        // continue;
+       // this.label2.visible = false
+      }else{
+        //this.label2.visible = true
+      }
+
+      // restore the element to its default display style
+      //elem.style.display = '';
+
+      // get the normalized screen coordinate of that position
+      // x and y will be in the -1 to +1 range with x = -1 being
+      // on the left and y = -1 being on the bottom
+      this.tempV.copy(this.position);
+      this.tempV.project(this.camera);
+
+      // convert the normalized position to CSS coordinates
+      const x = (this.tempV.x *  .5 + .5) * this.canvas.clientWidth;
+      const y = (this.tempV.y * -.5 + .5) * this.canvas.clientHeight;
+
+      // move the elem to that position
+      // this.label2.element.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
+
+      // // set the zIndex for sorting
+      // var str = (-this.tempV.z * .5 + .5) * 100000 | 0 
+      // this.label2.element.style.zIndex = str.toString();
+    //}
+  }
+
+
+
+
+
+
+
+gotoAnnotation(a: any): any {
+    new TWEEN.Tween(this.camera.position)
+        .to(
+            {
+                x: a.camPos.x,
+                y: a.camPos.y,
+                z: a.camPos.z,
+            },
+            500
+        )
+        .easing(TWEEN.Easing.Cubic.Out)
+        .start()
+
+    new TWEEN.Tween(this.controls.target)
+        .to(
+            {
+                x: a.lookAt.x,
+                y: a.lookAt.y,
+                z: a.lookAt.z,
+            },
+            500
+        )
+        .easing(TWEEN.Easing.Cubic.Out)
+        .start()
+
+    Object.keys(this.annotations).forEach((annotation) => {
+        if (this.annotations[annotation].descriptionDomElement) {
+            ;(this.annotations[annotation].descriptionDomElement as HTMLElement).style.display = 'none'
+        }
+    })
+    if (a.descriptionDomElement) {
+        a.descriptionDomElement.style.display = 'block'
+    }
+}
 
 
   meshArray(model: any) {
@@ -730,6 +1189,8 @@ this.camera.position.set(centerX, centerY, centerZ);
       _this.meshArray(l2);
     })
   }
+
+
 
   init() {
 
@@ -810,7 +1271,7 @@ this.camera.position.set(centerX, centerY, centerZ);
        this.selectedTooth = this.highlightedTooth;
        this.selectedTooth &&
          (this.selectedTooth.material.emissive.setHex(0x66a3ff))  //; = this.selectedToothMaterial);
- 
+       //  this.selectedTooth.material.emissiveIntensity = 0.5;
  
          this.currentToothObj =  this.selectedTooth
          this.currentObjDetail = this.selectedTooth
@@ -849,7 +1310,8 @@ this.camera.position.set(centerX, centerY, centerZ);
  
      } else {
        this.selectedTooth &&
-         (this.selectedTooth.material.emissive.setHex(0x00ff00));
+         (this.selectedTooth.material.emissive.setHex(0x66a3ff));
+        // this.selectedTooth.material.emissiveIntensity = 0.5;
          // this.selectedTooth &&
          // (this.selectedTooth.material = this.highlightedToothMaterial);
        this.selectedTooth = null;
@@ -944,6 +1406,24 @@ this.camera.position.set(centerX, centerY, centerZ);
     this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
     this.controlsGizmo.update();
+  // this.compose.render();
+  //this.updateLabels()
+  
+  
+  //this.stats.update()
+
+  TWEEN.update()
+
+
+
+
+
+ 
+
+
+
+
+
   }
 
   update() {
@@ -951,8 +1431,95 @@ this.camera.position.set(centerX, centerY, centerZ);
     
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
+   // this.raycaster.setFromCamera(this.tempV, this.camera);
 
     const intersects = this.raycaster.intersectObjects(this.teeth);
+
+    // const inter = this.raycaster.intersectObjects(this.labelTooth);
+
+    // if ( inter.length > 0) {
+    //   // hide the label
+    //  // elem.style.display = 'none';
+    //  this.label2.visible = false;  //false
+    // }
+    // else {
+    //   this.label2.visible = true;  //false
+    // }
+
+
+
+
+
+
+    this.meshHtml.forEach((cubeInfo:any, ndx:any) => {
+     // console.log(cubeInfo, ndx)
+    const {tooth, elem} = cubeInfo;
+    // const speed = 1 + ndx * .1;
+    // const rot = time * speed;
+    // cube.rotation.x = rot;
+    // cube.rotation.y = rot;
+    
+    //console.log('cube',cube)
+  
+    //console.log('elem',elem)
+  
+    // get the position of the center of the cube
+    tooth.updateWorldMatrix(true, false);
+    tooth.getWorldPosition(this.tempV);
+  
+    // get the normalized screen coordinate of that position
+    // x and y will be in the -1 to +1 range with x = -1 being
+    // on the left and y = -1 being on the bottom
+    this.tempV.project(this.camera);
+  
+     //console.log('tempV',this.tempV)
+  
+    // ask the raycaster for all the objects that intersect
+    // from the eye toward this object's position
+   
+     this.raycaster.setFromCamera(this.tempV, this.camera);
+   
+   
+   // console.log('tooth',tooth);
+    //console.log('this.teeth',this.teeth);
+   // const intersectedObjects = this.raycaster.intersectObjects(this.scene.children);
+   const intersectedObjects = this.raycaster.intersectObjects(this.teeth);
+
+    //console.log('intersectedObjects',intersectedObjects)
+    // We're visible if the first intersection is this object.
+    const show = intersectedObjects.length && tooth === intersectedObjects[0].object;
+    //console.log(show)
+  
+    
+
+ 
+   // console.log(this.tempV)
+    //console.log('Math.abs(tempV.z) ',Math.abs(this.tempV.z) )
+     //!show || 
+    if (!show || Math.abs(this.tempV.z) > 1) {
+      // hide the label
+      elem.style.display = 'none';
+      console.log('show',show)
+    } else {
+      // unhide the label
+      elem.style.display = '';
+  
+      // convert the normalized position to CSS coordinates
+      const x = (this.tempV.x *  .5 + .5) * this.canvas.clientWidth;
+      const y = (this.tempV.y * -.5 + .5) * this.canvas.clientHeight;
+  
+      // move the elem to that position
+      elem.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
+    }
+  
+    
+  });
+
+
+
+
+
+
     let currentTooth = null;
     if (intersects.length) {
       currentTooth = intersects[0].object as THREE.Mesh;
@@ -964,9 +1531,9 @@ this.camera.position.set(centerX, centerY, centerZ);
           var myData = this.backupdata.filter((data: any) => {
             return data.name == this.highlightedTooth.name;
           });
-          console.log('this.backupdata ====>',this.backupdata)
-          console.log('myData[0] ====>',myData[0])
-          console.log('this.highlightedTooth=>',this.highlightedTooth)
+          //console.log('this.backupdata ====>',this.backupdata)
+          //console.log('myData[0] ====>',myData[0])
+          //console.log('this.highlightedTooth=>',this.highlightedTooth)
           // if(myData.length>0){
           // var meshStandardMaterial = myData[0].materials[0] as THREE.MeshStandardMaterial;
           // this.highlightedTooth.material = meshStandardMaterial
@@ -981,6 +1548,8 @@ this.camera.position.set(centerX, centerY, centerZ);
        
 
           this.highlightedTooth.children[0]["visible"] = false;
+         // this.outlinePass.selectedObjects = [];
+         //this.label2.visible = false;  
         }
       }
       this.highlightedTooth = currentTooth;
@@ -1003,9 +1572,34 @@ this.camera.position.set(centerX, centerY, centerZ);
          // this.highlightedTooth.material = this.highlightedToothMaterial;
 
           this.highlightedTooth.material.emissive.setHex(0xff99cc);
+         // this.highlightedTooth.material.emissiveIntensity = 0.5;
+
+          this.addSelectedObject( this.highlightedTooth );
+					this.outlinePass.selectedObjects = this.selectedObjects 
+        // this.outlinePass.selectedObjects.push( this.highlightedTooth)
+         //this.outlinePass.selectedObjects =[this.highlightedTooth];
+            console.log(this.selectedObjects)
+            console.log('this.outlinePass',this.outlinePass)
+
+
         }
         if (this.highlightedTooth.children.length > 0) {
           this.highlightedTooth.children[0].visible = true;
+          
+
+          // const p = intersects[0].point
+
+          // new TWEEN.Tween(this.controls.target)
+          //     .to(
+          //         {
+          //             x: p.x,
+          //             y: p.y,
+          //             z: p.z,
+          //         },
+          //         500
+          //     )
+          //     .easing(TWEEN.Easing.Cubic.Out)
+           //   .start()
         }
       }
     }
@@ -1053,18 +1647,24 @@ this.camera.position.set(centerX, centerY, centerZ);
 //boundingBox
 //this.fitCameraTo(this.teeth[findIndex].geometry.boundingBox)
  //this.camera.position.set(-4, -4, -5);
-var centerX = this.teeth[findIndex].geometry.boundingBox.min.x;
-var centerY = this.teeth[findIndex].geometry.boundingBox.min.y;
-var centerZ = this.teeth[findIndex].geometry.boundingBox.min.z;
+//  var boxe:any = new THREE.Box3().setFromObject(this.teeth[findIndex]);
+// boxe.center(this.teeth[findIndex].position);
+// this.teeth[findIndex].localToWorld(boxe);
+// this.teeth[findIndex].position.multiplyScalar(-1);
 
-this.camera.position.set(centerX, centerY, centerZ);
 // var centerX = this.teeth[findIndex].geometry.boundingBox.max.x;
 // var centerY = this.teeth[findIndex].geometry.boundingBox.max.y;
 // var centerZ = this.teeth[findIndex].geometry.boundingBox.max.z;
 
 //  var centerX = this.teeth[findIndex].geometry.boundingSphere.center.x;
 //  var centerY = this.teeth[findIndex].geometry.boundingSphere.center.y;
-//  var centerZ = this.teeth[findIndex].geometry.boundingSphere.center.z;
+// var centerZ = this.teeth[findIndex].geometry.boundingSphere.center.z;
+
+var centerX = this.teeth[findIndex].geometry.boundingBox.min.x;
+var centerY = this.teeth[findIndex].geometry.boundingBox.min.y;
+var centerZ = this.teeth[findIndex].geometry.boundingBox.min.z;
+
+this.camera.position.set(centerX, centerY, centerZ);
 
 //var position = { x: centerX, y: centerY, z: centerZ };
 // centerX--;

@@ -12,6 +12,7 @@ import { NewCarComponent } from './new-car/new-car.component';
 import { NewCityComponent } from './new-city/new-city.component';
 import { ParkingComponent } from './parking/parking.component';
 import { SceneComponent } from './scene/scene.component';
+import { ThreeDTextComponent } from './three-d-text/three-d-text.component';
 
 const routes: Routes = [
   {
@@ -57,6 +58,9 @@ const routes: Routes = [
   },{
     path:'parking',
     component:ParkingComponent
+  },{
+    path:'3dtext',
+    component:ThreeDTextComponent
   }
 ];
 

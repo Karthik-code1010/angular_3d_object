@@ -150,3 +150,179 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     -12px -1px 0 -3px,
     -6px -6px 0 -1px
 }
+
+
+
+
+body {
+  overflow: hidden;
+  margin: 0px;
+}
+
+#progressBar {
+  width: 500px;
+  height: 24px;
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  margin-left: -250px;
+}
+
+#annotationsPanel {
+  position: absolute;
+  top: 180px;
+  left: 4px;
+  width: auto;
+  height: auto;
+  color: white;
+  font-family: monospace;
+}
+
+#annotationsPanel ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.annotationLabel {
+  color: #ffffff;
+  font-family: monospace;
+  pointer-events: none;
+  font-size: 17px;
+}
+
+.annotationDescription {
+  color: #ffffff;
+  font-family: monospace;
+  pointer-events: none;
+  font-size: 14px;
+  position: absolute;        
+  left: 25px;
+  padding: 1em;
+  width: 200px;            
+  background: rgba(0, 0, 0, 0.66);
+  border-radius: .5em;            
+  transition: opacity .5s;
+  display: none;
+}
+
+.annotationButton {
+  width: 160px;
+  height: 70px;
+  font-family: monospace;
+  background-color: rgba(.25, .25, .25, .5);
+  color: white;
+  text-align: left;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+
+// Animate the size, outside
+.pulse:hover, 
+.pulse:focus {
+  animation: pulse 1s;
+  box-shadow: 0 0 0 2em transparent;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 var(--hover); }
+}
+
+
+
+@mixin rings($duration, $delay) {
+  opacity: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: 0;
+  bottom: 0;
+  content: '';
+  height: 100%;
+  width: 100%;
+  border: 8px solid rgba(240, 66, 66, 0.5);
+  border-radius: 100%;
+  animation-name: ripple;
+  animation-duration: $duration;
+  animation-delay: $delay;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(.65,0,.34,1);
+  z-index: -1;
+}
+
+
+
+
+.request-loader {
+position: relative;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+height: 20px;
+width: 20px;
+border-radius: 100%;
+background: #FFFFFF;
+box-shadow: 0 0 20px 0 rgba(0,0,0,0.25);
+
+span {
+  position: relative;
+  font-size: 72px;
+  top: 5px;
+  left: -5px;
+}
+
+&::after {
+  @include rings(3s, 0s);
+}
+
+&::before {
+  @include rings(3s, 0.5s);
+}
+}
+
+
+@keyframes ripple {
+from {
+  opacity: 1;
+  transform: scale3d(1,1,1);
+}
+
+to {
+  opacity: 0;
+  transform: scale3d(1.5,1.5,1);
+}
+}
+
+
+
+#annotationsPanel {
+  position: absolute;  /* let us position ourself inside the container */
+  left: 0;             /* make our position the top left of the container */
+  top: 0;
+  color: white;
+}
+#annotationsPanel>div {
+  position: absolute;  /* let us position them inside the container */
+  left: 0;             /* make their default position the top left of the container */
+  top: 0;
+  cursor: pointer;     /* change the cursor to a hand when over us */
+  font-size: large;
+  user-select: none;   /* don't let the text get selected */
+  text-shadow:         /* create a black outline */
+  -1px -1px 0 #000,
+  0   -1px 0 #000,
+  1px -1px 0 #000,
+  1px  0   0 #000,
+  1px  1px 0 #000,
+  0    1px 0 #000,
+  -1px  1px 0 #000,
+  -1px  0   0 #000;
+}
+#annotationsPanel>div:hover {
+  color: red;
+}

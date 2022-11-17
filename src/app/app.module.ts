@@ -20,6 +20,7 @@ import { NewCarComponent } from './new-car/new-car.component';
 import { NewCityComponent } from './new-city/new-city.component';
 import { SceneComponent } from './scene/scene.component';
 import { ParkingComponent } from './parking/parking.component';
+import { ThreeDTextComponent } from './three-d-text/three-d-text.component';
 @NgModule({
   declarations: [
     ParkingComponent,
@@ -34,7 +35,8 @@ import { ParkingComponent } from './parking/parking.component';
     MachineModelComponent,
     ModelAxisComponent,
     NewCarComponent,
-    NewCityComponent
+    NewCityComponent,
+    ThreeDTextComponent
   ],
   imports: [
     ReactiveFormsModule,
