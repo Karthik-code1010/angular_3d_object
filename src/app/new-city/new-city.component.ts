@@ -175,6 +175,7 @@ private  controlsGizmo: any;
   position: THREE.Vector3;
   labelTooth: any;
   meshHtml: any = [];
+  iconclickfound: any;
 
 
 
@@ -307,7 +308,7 @@ annotations: any = [
       //  this.outlinePass.visibleEdgeColor.set( new THREE.Color(0xff0000));
       //  this.outlinePass.hiddenEdgeColor.set( new THREE.Color(0x190a05));
 
-      console.log(' this.outlinePass', this.outlinePass);
+      //console.log(' this.outlinePass', this.outlinePass);
       this.compose.addPass(this.renderPass);
       this.compose.addPass(this.outlinePass);
     //const element:any = document.getElementById("jeepObjectId");
@@ -315,13 +316,13 @@ annotations: any = [
     this.elementDiv.appendChild(renderer.domElement);
   //  this.elementDiv.appendChild(this.stats.dom);
     this.controls = new OrbitControls(this.camera, renderer.domElement);
-    console.log('this.controls ==2>',this.controls)
+    //console.log('this.controls ==2>',this.controls)
     // const helper = new THREE.CameraHelper( this.camera );
     // this.scene.add( helper );
    
    
     this.controlsGizmo = new OrbitControlsGizmo( this.controls , { size: 100, padding: 8 });
-    console.log('this.controlsGizmo',this.controlsGizmo)
+    //console.log('this.controlsGizmo',this.controlsGizmo)
      this.elementDiv.appendChild(this.controlsGizmo.domElement);
     // // document.body.appendChild(controlsGizmo.domElement);
 
@@ -376,7 +377,7 @@ annotations: any = [
   
     if(this.cursonTrueFalse ==  false){
     
-      console.log('disable work');
+      //console.log('disable work');
       this.cursonTrueFalse = true
   
      // this.controls.enabled = false;
@@ -386,7 +387,7 @@ annotations: any = [
     }else{
      
   
-      console.log('enable work');
+      //console.log('enable work');
       this.cursonTrueFalse = false;
      // this.controls.enabled = true;
       // this.controls.enableRotate = true;
@@ -410,10 +411,10 @@ annotations: any = [
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xd4d4d8)
     this.loaderGLTF.load('assets/newcity/scene.gltf', (gltf: GLTF) => {
-console.log('gltf',gltf)
+//console.log('gltf',gltf)
       // this.model = gltf.scene.children[0];
       this.model = gltf.scene;
-      console.log(this.model);
+      //console.log(this.model);
       this.dataSource.data  = [gltf.scene]
       var box = new THREE.Box3().setFromObject(this.model);
       box.getCenter(this.model.position); // this re-sets the mesh position
@@ -503,7 +504,7 @@ console.log('gltf',gltf)
   });
 
   // this.myForm.controls['myControl'].valueChanges.subscribe(value => {
-  //   console.log(value);
+  //   //console.log(value);
   //  // var temp:any = this.orgData
   //   if(value.length > 0){
   //     this.valuechange(value) 
@@ -512,7 +513,7 @@ console.log('gltf',gltf)
   //   }
    
 
-//console.log(result);
+////console.log(result);
   //});
   
 
@@ -592,13 +593,13 @@ console.log('gltf',gltf)
     camera.updateProjectionMatrix();
 }
   valuechange(ev:any){
-    console.log('ev',ev)
-    console.log(this.searchName)
-    console.log(this.teeth)
+    //console.log('ev',ev)
+    //console.log(this.searchName)
+    //console.log(this.teeth)
 
     if(this.searchName && this.searchName.length > 0){
       
-    console.log(this.teeth);
+    //console.log(this.teeth);
    
 
    
@@ -614,10 +615,10 @@ console.log('gltf',gltf)
   if(findIndex != -1){
 
 
-    console.log(findIndex)
+    //console.log(findIndex)
     //this.teeth[findIndex] = 
-  //  console.log(found);
-  //  console.log(found.xLength, found.yLength, found.zLength)
+  //  //console.log(found);
+  //  //console.log(found.xLength, found.yLength, found.zLength)
    //found =this.teeth[0].material.clone();
   
    var box = new THREE.BoxHelper(  this.teeth[findIndex] );
@@ -636,13 +637,13 @@ console.log('gltf',gltf)
   // this.fitCameraTo(fitcamera)
     this.scene.add( box );
   
-    console.log('current obj',this.teeth[findIndex])
-    console.log('this.camera',this.camera);
-    console.log(this.scene)
+    //console.log('current obj',this.teeth[findIndex])
+    //console.log('this.camera',this.camera);
+    //console.log(this.scene)
   
-    //console.log('this.myControl.value',this.myControl)
+    ////console.log('this.myControl.value',this.myControl)
     // this.treeControl.dataNodes.forEach((element:any)=>{
-    //   console.log('element.id ',element.id )
+    //   //console.log('element.id ',element.id )
     //   if(element.id == this.myControl.value){
     //     element.isHighlight = true;
   
@@ -684,14 +685,14 @@ this.camera.position.set(centerX, centerY, centerZ);
 
     this.tree.treeControl.expandAll();
 
-  //  console.log('filter data',filteredData)
+  //  //console.log('filter data',filteredData)
      this.treeControl.dataNodes.forEach((element:any)=>{
-     // console.log('element.id ',element.id )
+     // //console.log('element.id ',element.id )
 
       this.filteredData.forEach((filter:any)=>{
-      //  console.log('fiter',filter)
+      //  //console.log('fiter',filter)
         if(element.id == filter.id){
-        //  console.log(element.id,'======',filter.id)
+        //  //console.log(element.id,'======',filter.id)
           element.isHighlight = true;
     
         }
@@ -700,7 +701,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       
     })
 
-   // console.log('copyOfData',this.copyOfData);
+   // //console.log('copyOfData',this.copyOfData);
    // this.teeth = this.copyOfData
     this.scene.children.forEach((sobj:any)=>{
       if(sobj.type == 'BoxHelper'){
@@ -746,7 +747,7 @@ this.camera.position.set(centerX, centerY, centerZ);
   }
   gotoIconCLick(iconVal:any){
 
-    console.log('iconVal',iconVal);
+    //console.log('iconVal',iconVal);
   //   const annotationDiv = document.createElement('div')
   //   annotationDiv.className = 'annotationLabel'
   //   annotationDiv.innerHTML = '1';
@@ -789,8 +790,8 @@ this.camera.position.set(centerX, centerY, centerZ);
     //         // if(tooth.userData.name == "pCube33_blinn3_0"){
     //         this.teeth.push(tooth);
     //         this.backupdata.push(tooth.clone());
-    //         // console.log(this.teeth)
-    //         // console.log(this.backupdata)
+    //         // //console.log(this.teeth)
+    //         // //console.log(this.backupdata)
     //         // this.toothMaterial = tooth.material;
     //         // this.highlightedToothMaterial = tooth.material.clone();
     //         // this.highlightedToothMaterial.emissive.setHex(0xff00ff);//ping
@@ -820,12 +821,12 @@ this.camera.position.set(centerX, centerY, centerZ);
     // _this.backupdata =  []
     // _this.teeth.push(found)
     // _this.backupdata.push(found.clone())
-    // console.log(' _this.teeth', _this.teeth);
-    // console.log('  _this.backupdata',  _this.backupdata);
+    // //console.log(' _this.teeth', _this.teeth);
+    // //console.log('  _this.backupdata',  _this.backupdata);
     // this.emissiveData = _this.backupdata[0].material.emissive.getHex();
 
 
-    console.log(' this.emissiveData =====>', this.emissiveData )
+    //console.log(' this.emissiveData =====>', this.emissiveData )
 
     const circleTexture = new THREE.TextureLoader().load('../../assets/circle.png')
     _this.teeth =  _this.teeth.filter((word:any) => word.name != 'pCylinder18_blinn18_0');
@@ -847,7 +848,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       // tooth.material.opacity = 0.2
       // tooth.material.depthWrite = false
 
-      console.log('tooth',tooth)
+      //console.log('tooth',tooth)
 
       // const addCircle = document.createElement("div");
       // addCircle.classList.add("addCircle");
@@ -901,14 +902,23 @@ this.camera.position.set(centerX, centerY, centerZ);
     img.src = "../../assets/lipid.png";
     img.setAttribute("height", "16");
     img.setAttribute("width", "16");
+
  
-    img.addEventListener('click',  ()=> {
-     console.log('icon click')
-  })
+  //   img.addEventListener('click',  ()=> {
+  //    console.log('icon click')
+  // })
 
     const elem = document.createElement('div');
    // elem.textContent = name;
     elem.appendChild(img);
+    elem.addEventListener('click',  ()=> {
+      console.log('icon click',tooth.id)
+
+       this.iconclickfound = this.teeth.find((element:any) => element.id == tooth.id);
+       console.log(this.iconclickfound)
+
+
+   })
     elem.classList.add("request-loader");
     labelContainerElem.appendChild(elem);
 
@@ -973,8 +983,8 @@ this.camera.position.set(centerX, centerY, centerZ);
       //this.camera.position.set(tooth.geometry.boundingBox.min.x, tooth.geometry.boundingBox.min.y, tooth.geometry.boundingBox.min.z);
     
 
-    //console.log('label2',this.label2);
-    //console.log('tooth label2',tooth)
+    ////console.log('label2',this.label2);
+    ////console.log('tooth label2',tooth)
 
 //     const textureLoader = new TextureLoader();
 
@@ -989,8 +999,8 @@ this.camera.position.set(centerX, centerY, centerZ);
     });
 
   //  const annotationMarkers: THREE.Sprite[] = []
-//    console.log(this.teeth);
-  //  console.log(this.scene);
+//    //console.log(this.teeth);
+  //  //console.log(this.scene);
    // this.options = this.teeth
 
   
@@ -1007,8 +1017,8 @@ this.camera.position.set(centerX, centerY, centerZ);
 //            const ulElem = annotationsPanel.appendChild(ul)
 //            Object.keys(this.annotations).forEach((a) => {
 
-//             console.log('a=>',a)
-//             console.log('this.annotations',this.annotations)
+//             //console.log('a=>',a)
+//             //console.log('this.annotations',this.annotations)
 //                const li = document.createElement('li') as HTMLLIElement
 //                const liElem = ulElem.appendChild(li)
 //                const button = document.createElement('button') as HTMLButtonElement
@@ -1026,7 +1036,7 @@ this.camera.position.set(centerX, centerY, centerZ);
 //                    sizeAttenuation: false,
 //                })
 
-//                console.log('annotationSpriteMaterial',annotationSpriteMaterial)
+//                //console.log('annotationSpriteMaterial',annotationSpriteMaterial)
 //                const annotationSprite = new THREE.Sprite(annotationSpriteMaterial)
 
 
@@ -1036,7 +1046,7 @@ this.camera.position.set(centerX, centerY, centerZ);
 //                annotationSprite.userData.id = a
 //                this.scene.add(annotationSprite)
 //                annotationMarkers.push(annotationSprite)
-//                console.log('annotationSprite',annotationSprite)
+//                //console.log('annotationSprite',annotationSprite)
 
 //                const annotationDiv = document.createElement('div')
 //                annotationDiv.className = 'annotationLabel'
@@ -1259,7 +1269,7 @@ gotoAnnotation(a: any): any {
            return data.name == this.selectedTooth.name;
          });
  
-         console.log('mouse click backup mydata',myData[0])
+         //console.log('mouse click backup mydata',myData[0])
          //this.selectedTooth.material = myData[0].material;
         // myData[0].material.emissive.getHex()
         this.selectedTooth.material.emissive.setHex(0); 
@@ -1276,7 +1286,7 @@ gotoAnnotation(a: any): any {
          this.currentToothObj =  this.selectedTooth
          this.currentObjDetail = this.selectedTooth
          // currentTooth.material.color.set( Math.random() * 0xffffff );
-          console.log('currentTooth->',this.currentToothObj);
+          //console.log('currentTooth->',this.currentToothObj);
           this.scene.children.forEach((sobj:any)=>{
             if(sobj.type == 'BoxHelper'){
       
@@ -1289,8 +1299,8 @@ gotoAnnotation(a: any): any {
           this.scene.add( box );
           this.tree.treeControl.expandAll();
     
-          console.log( this.currentToothObj.id)
-          console.log('this.treeControl',this.treeControl)
+          //console.log( this.currentToothObj.id)
+          //console.log('this.treeControl',this.treeControl)
     
           this.treeControl.dataNodes.forEach((element:any)=>{
             if(element.id == this.currentToothObj.id){
@@ -1301,9 +1311,9 @@ gotoAnnotation(a: any): any {
             }
           })
     
-          console.log('this.treeFlattener',this.treeFlattener)
+          //console.log('this.treeFlattener',this.treeFlattener)
     
-          console.log('data sourse',this.dataSource)
+          //console.log('data sourse',this.dataSource)
     
  
  
@@ -1452,16 +1462,16 @@ gotoAnnotation(a: any): any {
 
 
     this.meshHtml.forEach((cubeInfo:any, ndx:any) => {
-     // console.log(cubeInfo, ndx)
+     // //console.log(cubeInfo, ndx)
     const {tooth, elem} = cubeInfo;
     // const speed = 1 + ndx * .1;
     // const rot = time * speed;
     // cube.rotation.x = rot;
     // cube.rotation.y = rot;
     
-    //console.log('cube',cube)
+    ////console.log('cube',cube)
   
-    //console.log('elem',elem)
+    ////console.log('elem',elem)
   
     // get the position of the center of the cube
     tooth.updateWorldMatrix(true, false);
@@ -1472,7 +1482,7 @@ gotoAnnotation(a: any): any {
     // on the left and y = -1 being on the bottom
     this.tempV.project(this.camera);
   
-     //console.log('tempV',this.tempV)
+     ////console.log('tempV',this.tempV)
   
     // ask the raycaster for all the objects that intersect
     // from the eye toward this object's position
@@ -1480,26 +1490,26 @@ gotoAnnotation(a: any): any {
      this.raycaster.setFromCamera(this.tempV, this.camera);
    
    
-   // console.log('tooth',tooth);
-    //console.log('this.teeth',this.teeth);
+   // //console.log('tooth',tooth);
+    ////console.log('this.teeth',this.teeth);
    // const intersectedObjects = this.raycaster.intersectObjects(this.scene.children);
    const intersectedObjects = this.raycaster.intersectObjects(this.teeth);
 
-    //console.log('intersectedObjects',intersectedObjects)
+    ////console.log('intersectedObjects',intersectedObjects)
     // We're visible if the first intersection is this object.
     const show = intersectedObjects.length && tooth === intersectedObjects[0].object;
-    //console.log(show)
+    ////console.log(show)
   
     
 
  
-   // console.log(this.tempV)
-    //console.log('Math.abs(tempV.z) ',Math.abs(this.tempV.z) )
+   // //console.log(this.tempV)
+    ////console.log('Math.abs(tempV.z) ',Math.abs(this.tempV.z) )
      //!show || 
     if (!show || Math.abs(this.tempV.z) > 1) {
       // hide the label
       elem.style.display = 'none';
-      console.log('show',show)
+      //console.log('show',show)
     } else {
       // unhide the label
       elem.style.display = '';
@@ -1531,9 +1541,9 @@ gotoAnnotation(a: any): any {
           var myData = this.backupdata.filter((data: any) => {
             return data.name == this.highlightedTooth.name;
           });
-          //console.log('this.backupdata ====>',this.backupdata)
-          //console.log('myData[0] ====>',myData[0])
-          //console.log('this.highlightedTooth=>',this.highlightedTooth)
+          ////console.log('this.backupdata ====>',this.backupdata)
+          ////console.log('myData[0] ====>',myData[0])
+          ////console.log('this.highlightedTooth=>',this.highlightedTooth)
           // if(myData.length>0){
           // var meshStandardMaterial = myData[0].materials[0] as THREE.MeshStandardMaterial;
           // this.highlightedTooth.material = meshStandardMaterial
@@ -1578,8 +1588,8 @@ gotoAnnotation(a: any): any {
 					this.outlinePass.selectedObjects = this.selectedObjects 
         // this.outlinePass.selectedObjects.push( this.highlightedTooth)
          //this.outlinePass.selectedObjects =[this.highlightedTooth];
-            console.log(this.selectedObjects)
-            console.log('this.outlinePass',this.outlinePass)
+            //console.log(this.selectedObjects)
+            //console.log('this.outlinePass',this.outlinePass)
 
 
         }
@@ -1606,7 +1616,7 @@ gotoAnnotation(a: any): any {
   }
 
   focusObject(clickObj:any){
-    console.log(clickObj);
+    //console.log(clickObj);
     this.activeNode = clickObj
 
     this.teeth.forEach((objdata:any,index:any) => {
@@ -1614,7 +1624,7 @@ gotoAnnotation(a: any): any {
       
     });
 
-    console.log(this.teeth);
+    //console.log(this.teeth);
 
     this.scene.children.forEach((sobj:any)=>{
       if(sobj.type == 'BoxHelper'){
@@ -1626,10 +1636,10 @@ gotoAnnotation(a: any): any {
     var found = this.teeth.find((element:any) => element.id == clickObj.id);
 
   var findIndex =   this.teeth.findIndex((element:any) => element.id == clickObj.id)
-  console.log(findIndex)
+  //console.log(findIndex)
   //this.teeth[findIndex] = 
-//  console.log(found);
-//  console.log(found.xLength, found.yLength, found.zLength)
+//  //console.log(found);
+//  //console.log(found.xLength, found.yLength, found.zLength)
  //found =this.teeth[0].material.clone();
 
  var box = new THREE.BoxHelper(  this.teeth[findIndex] );
@@ -1687,8 +1697,8 @@ this.currentObjDetail = this.teeth[findIndex]
 
 	this.scene.add( box );
 
-  console.log('current obj',this.teeth[findIndex])
-  console.log(this.scene)
+  //console.log('current obj',this.teeth[findIndex])
+  //console.log(this.scene)
 
   this.treeControl.dataNodes.forEach((element:any)=>{
     if(element.id == clickObj.id){

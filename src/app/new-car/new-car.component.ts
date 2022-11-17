@@ -182,6 +182,7 @@ private  controlsGizmo: any;
   position: THREE.Vector3;
   labelTooth: any;
   meshHtml: any = [];
+  iconclickfound: any;
 
 
 
@@ -314,7 +315,7 @@ annotations: any = [
       //  this.outlinePass.visibleEdgeColor.set( new THREE.Color(0xff0000));
       //  this.outlinePass.hiddenEdgeColor.set( new THREE.Color(0x190a05));
 
-      console.log(' this.outlinePass', this.outlinePass);
+      //console.log(' this.outlinePass', this.outlinePass);
       this.compose.addPass(this.renderPass);
       this.compose.addPass(this.outlinePass);
     //const element:any = document.getElementById("jeepObjectId");
@@ -322,13 +323,13 @@ annotations: any = [
     this.elementDiv.appendChild(renderer.domElement);
   //  this.elementDiv.appendChild(this.stats.dom);
     this.controls = new OrbitControls(this.camera, renderer.domElement);
-    console.log('this.controls ==2>',this.controls)
+    //console.log('this.controls ==2>',this.controls)
     // const helper = new THREE.CameraHelper( this.camera );
     // this.scene.add( helper );
    
    
     this.controlsGizmo = new OrbitControlsGizmo( this.controls , { size: 100, padding: 8 });
-    console.log('this.controlsGizmo',this.controlsGizmo)
+   // console.log('this.controlsGizmo',this.controlsGizmo)
      this.elementDiv.appendChild(this.controlsGizmo.domElement);
     // // document.body.appendChild(controlsGizmo.domElement);
 
@@ -383,7 +384,7 @@ annotations: any = [
   
     if(this.cursonTrueFalse ==  false){
     
-      console.log('disable work');
+     // console.log('disable work');
       this.cursonTrueFalse = true
   
      // this.controls.enabled = false;
@@ -393,7 +394,7 @@ annotations: any = [
     }else{
      
   
-      console.log('enable work');
+     // console.log('enable work');
       this.cursonTrueFalse = false;
      // this.controls.enabled = true;
       // this.controls.enableRotate = true;
@@ -599,13 +600,13 @@ console.log('gltf',gltf)
     camera.updateProjectionMatrix();
 }
   valuechange(ev:any){
-    console.log('ev',ev)
-    console.log(this.searchName)
-    console.log(this.teeth)
+    //console.log('ev',ev)
+    //console.log(this.searchName)
+    //console.log(this.teeth)
 
     if(this.searchName && this.searchName.length > 0){
       
-    console.log(this.teeth);
+    //console.log(this.teeth);
    
 
    
@@ -621,7 +622,7 @@ console.log('gltf',gltf)
   if(findIndex != -1){
 
 
-    console.log(findIndex)
+    //console.log(findIndex)
     //this.teeth[findIndex] = 
   //  console.log(found);
   //  console.log(found.xLength, found.yLength, found.zLength)
@@ -643,9 +644,9 @@ console.log('gltf',gltf)
   // this.fitCameraTo(fitcamera)
     this.scene.add( box );
   
-    console.log('current obj',this.teeth[findIndex])
-    console.log('this.camera',this.camera);
-    console.log(this.scene)
+    //console.log('current obj',this.teeth[findIndex])
+    //console.log('this.camera',this.camera);
+    //console.log(this.scene)
   
     //console.log('this.myControl.value',this.myControl)
     // this.treeControl.dataNodes.forEach((element:any)=>{
@@ -753,7 +754,7 @@ this.camera.position.set(centerX, centerY, centerZ);
   }
   gotoIconCLick(iconVal:any){
 
-    console.log('iconVal',iconVal);
+   // console.log('iconVal',iconVal);
   //   const annotationDiv = document.createElement('div')
   //   annotationDiv.className = 'annotationLabel'
   //   annotationDiv.innerHTML = '1';
@@ -832,7 +833,7 @@ this.camera.position.set(centerX, centerY, centerZ);
     // this.emissiveData = _this.backupdata[0].material.emissive.getHex();
 
 
-    console.log(' this.emissiveData =====>', this.emissiveData )
+   // console.log(' this.emissiveData =====>', this.emissiveData )
 
     const circleTexture = new THREE.TextureLoader().load('../../assets/circle.png')
     _this.teeth =  _this.teeth.filter((word:any) => word.name != 'pCylinder18_blinn18_0');
@@ -854,7 +855,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       // tooth.material.opacity = 0.2
       // tooth.material.depthWrite = false
 
-      console.log('tooth',tooth)
+      //console.log('tooth',tooth)
 
       // const addCircle = document.createElement("div");
       // addCircle.classList.add("addCircle");
@@ -900,7 +901,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       label.position.set(0, 0, 0);
       label.visible = false;
       tooth.add(label);
-  if(tooth.name == 'polySurface848_jeep_wrangler_aiStandardSurface4_0' || tooth.name ==  'polySurface819_jeep_wrangler_aiStandardSurface4_0'|| tooth.name == 'polySurface846_jeep_wrangler_aiStandardSurface4_0' || tooth.name == 'polySurface852_jeep_wrangler_aiStandardSurface4_0')
+  if(tooth.name == 'polySurface848_jeep_wrangler_aiStandardSurface4_0' || tooth.name ==  'polySurface819_jeep_wrangler_aiStandardSurface4_0'|| tooth.name == 'pSphere3_aiStandardSurface6_0' || tooth.name == 'polySurface852_jeep_wrangler_aiStandardSurface4_0')
 
   {
     //labelContainerElem
@@ -909,13 +910,21 @@ this.camera.position.set(centerX, centerY, centerZ);
     img.setAttribute("height", "16");
     img.setAttribute("width", "16");
  
-    img.addEventListener('click',  ()=> {
-     console.log('icon click')
-  })
+  //   img.addEventListener('click',  ()=> {
+  //   // console.log('icon click')
+  // })
 
     const elem = document.createElement('div');
    // elem.textContent = name;
     elem.appendChild(img);
+    elem.addEventListener('click',  ()=> {
+      console.log('icon click',tooth.id)
+
+       this.iconclickfound = this.teeth.find((element:any) => element.id == tooth.id);
+       console.log(this.iconclickfound)
+
+
+   })
     elem.classList.add("request-loader");
     labelContainerElem.appendChild(elem);
 
@@ -1266,7 +1275,7 @@ gotoAnnotation(a: any): any {
            return data.name == this.selectedTooth.name;
          });
  
-         console.log('mouse click backup mydata',myData[0])
+         //console.log('mouse click backup mydata',myData[0])
          //this.selectedTooth.material = myData[0].material;
         // myData[0].material.emissive.getHex()
         this.selectedTooth.material.emissive.setHex(0); 
@@ -1283,7 +1292,7 @@ gotoAnnotation(a: any): any {
          this.currentToothObj =  this.selectedTooth
          this.currentObjDetail = this.selectedTooth
          // currentTooth.material.color.set( Math.random() * 0xffffff );
-          console.log('currentTooth->',this.currentToothObj);
+          //console.log('currentTooth->',this.currentToothObj);
           this.scene.children.forEach((sobj:any)=>{
             if(sobj.type == 'BoxHelper'){
       
@@ -1296,8 +1305,8 @@ gotoAnnotation(a: any): any {
           this.scene.add( box );
           this.tree.treeControl.expandAll();
     
-          console.log( this.currentToothObj.id)
-          console.log('this.treeControl',this.treeControl)
+        //  console.log( this.currentToothObj.id)
+         // console.log('this.treeControl',this.treeControl)
     
           this.treeControl.dataNodes.forEach((element:any)=>{
             if(element.id == this.currentToothObj.id){
@@ -1308,9 +1317,9 @@ gotoAnnotation(a: any): any {
             }
           })
     
-          console.log('this.treeFlattener',this.treeFlattener)
+          //console.log('this.treeFlattener',this.treeFlattener)
     
-          console.log('data sourse',this.dataSource)
+          //console.log('data sourse',this.dataSource)
     
  
  
@@ -1585,8 +1594,8 @@ gotoAnnotation(a: any): any {
 					this.outlinePass.selectedObjects = this.selectedObjects 
         // this.outlinePass.selectedObjects.push( this.highlightedTooth)
          //this.outlinePass.selectedObjects =[this.highlightedTooth];
-            console.log(this.selectedObjects)
-            console.log('this.outlinePass',this.outlinePass)
+           // console.log(this.selectedObjects)
+           // console.log('this.outlinePass',this.outlinePass)
 
 
         }
@@ -1613,7 +1622,7 @@ gotoAnnotation(a: any): any {
   }
 
   focusObject(clickObj:any){
-    console.log(clickObj);
+   // console.log(clickObj);
     this.activeNode = clickObj
 
     this.teeth.forEach((objdata:any,index:any) => {
@@ -1621,7 +1630,7 @@ gotoAnnotation(a: any): any {
       
     });
 
-    console.log(this.teeth);
+    //console.log(this.teeth);
 
     this.scene.children.forEach((sobj:any)=>{
       if(sobj.type == 'BoxHelper'){
@@ -1633,7 +1642,7 @@ gotoAnnotation(a: any): any {
     var found = this.teeth.find((element:any) => element.id == clickObj.id);
 
   var findIndex =   this.teeth.findIndex((element:any) => element.id == clickObj.id)
-  console.log(findIndex)
+ // console.log(findIndex)
   //this.teeth[findIndex] = 
 //  console.log(found);
 //  console.log(found.xLength, found.yLength, found.zLength)
@@ -1694,8 +1703,8 @@ this.currentObjDetail = this.teeth[findIndex]
 
 	this.scene.add( box );
 
-  console.log('current obj',this.teeth[findIndex])
-  console.log(this.scene)
+  //console.log('current obj',this.teeth[findIndex])
+  //console.log(this.scene)
 
   this.treeControl.dataNodes.forEach((element:any)=>{
     if(element.id == clickObj.id){

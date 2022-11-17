@@ -105,7 +105,27 @@
                                               
                                               </mat-list>
                                         </mat-tab>
-                                        <mat-tab label="TAB 3"> Content 3 </mat-tab>
+                                        <mat-tab label="TAB 3">
+                                            
+                                            <div *ngIf="iconclickfound" style="font-size: 13px;margin: 10px;">
+                                                <br>
+                                                <div fxLayout="row">
+
+                                                    <span style="margin-right: 10px;">Id  </span>
+                                                    <span>
+                                                        {{iconclickfound.id}}
+                                                    </span>
+                                                </div>
+                                                <br>
+                                                <div fxLayout="row">
+                                                    <span style="margin-right: 8px;">Name </span>
+                                                    <span>
+                                                        {{iconclickfound.name}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        
+                                        </mat-tab>
                                       </mat-tab-group>
                                 
                         
