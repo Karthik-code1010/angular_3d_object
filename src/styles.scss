@@ -326,3 +326,22 @@ to {
 #annotationsPanel>div:hover {
   color: red;
 }
+
+
+.annotation {
+  position: absolute;
+  top: 0;
+  left: 855px;
+  z-index: 1;
+  margin-left: 15px;
+  margin-top: 15px;
+  padding: 1em;
+  width: auto;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: .5em;
+  font-size: 12px;
+  line-height: 1.2;
+  transition: opacity .5s;
+ 
+}

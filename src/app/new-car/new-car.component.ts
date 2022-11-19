@@ -183,6 +183,9 @@ private  controlsGizmo: any;
   labelTooth: any;
   meshHtml: any = [];
   iconclickfound: any;
+  annotationDetail: any;
+  objname: HTMLParagraphElement;
+  objid: HTMLParagraphElement;
 
 
 
@@ -898,7 +901,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       labelDiv.append(nameSpan);
      // labelDiv.append(addCircle);
       const label = new CSS2DObject(labelDiv);
-      label.position.set(0, 0, 0);
+      label.position.set(2, 2, 0);
       label.visible = false;
       tooth.add(label);
   if(tooth.name == 'polySurface848_jeep_wrangler_aiStandardSurface4_0' || tooth.name ==  'polySurface819_jeep_wrangler_aiStandardSurface4_0'|| tooth.name == 'pSphere3_aiStandardSurface6_0' || tooth.name == 'polySurface852_jeep_wrangler_aiStandardSurface4_0')
@@ -917,11 +920,35 @@ this.camera.position.set(centerX, centerY, centerZ);
     const elem = document.createElement('div');
    // elem.textContent = name;
     elem.appendChild(img);
-    elem.addEventListener('click',  ()=> {
+
+    this.annotationDetail = document.querySelector('#annotationDetail');
+    this.objname = document.createElement("p");
+    this.objid = document.createElement("p");
+
+    elem.addEventListener('click',  (event)=> {
       console.log('icon click',tooth.id)
+      console.log('event',event);
 
        this.iconclickfound = this.teeth.find((element:any) => element.id == tooth.id);
        console.log(this.iconclickfound)
+      // alert(tooth.name)
+    //annotationDetail
+    
+
+    this.annotationDetail.classList.add("annotation");
+    this.annotationDetail.style.top = event.clientY+"px";
+    this.annotationDetail.style.left = event.clientX+"px";
+
+  
+    this.objid.textContent = ""
+    this.objid.textContent =tooth.id
+    this.annotationDetail.append(this.objid);
+   
+    this.objname.textContent =""
+    this.objname.textContent =tooth.name
+    this.annotationDetail.append(this.objname);
+
+
 
 
    })
@@ -1558,6 +1585,10 @@ gotoAnnotation(a: any): any {
           //this.highlightedTooth.material.emissive.setHex(myData[0].material.emissive.getHex()); //.material.color.getHex()
            this.highlightedTooth.material.emissive.setHex(0);
           // this.highlightedTooth.material = this.toothMaterial;
+
+          this.annotationDetail.classList.remove("annotation");
+          this.objid.textContent = ""
+          this.objname.textContent =""
         }
         if (this.highlightedTooth.children.length > 0) {
 

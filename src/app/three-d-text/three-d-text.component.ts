@@ -897,7 +897,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       labelDiv.append(nameSpan);
      // labelDiv.append(addCircle);
       const label = new CSS2DObject(labelDiv);
-      label.position.set(0, 0, 0);
+      label.position.set(2, 2, 0);
       label.visible = false;
       tooth.add(label);
   if(tooth.name == 'GEO_rbumper_carpaint_2_EXT_carpaint4_0' || tooth.name == 'GEO_tyreRR_2_EXT_tyre3_0' || tooth.name == 'GEO_rbumper_SUB1_EXT_metal_0')

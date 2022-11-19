@@ -891,7 +891,7 @@ this.camera.position.set(centerX, centerY, centerZ);
       labelDiv.append(nameSpan);
      // labelDiv.append(addCircle);
       const label = new CSS2DObject(labelDiv);
-      label.position.set(0, 0, 0);
+      label.position.set(2, 2, 0);
       label.visible = false;
       tooth.add(label);
   if(tooth.name == 'Object_88' || tooth.name ==  'Object_25'|| tooth.name == 'Object_11')
