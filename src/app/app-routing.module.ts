@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CubeComponent } from './cube/cube.component';
 import { DomMousehoverComponent } from './dom-mousehover/dom-mousehover.component';
+import { FactoryMachineComponent } from './factory-machine/factory-machine.component';
 import { FinalJeepComponent } from './final-jeep/final-jeep.component';
 import { JeepHoverComponent } from './jeep-hover/jeep-hover.component';
 import { JeepObjectComponent } from './jeep-object/jeep-object.component';
@@ -61,6 +62,10 @@ const routes: Routes = [
   },{
     path:'3dtext',
     component:ThreeDTextComponent
+  },
+  {
+    path:'factory',
+    component:FactoryMachineComponent
   }
 ];
 

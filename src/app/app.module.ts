@@ -21,8 +21,10 @@ import { NewCityComponent } from './new-city/new-city.component';
 import { SceneComponent } from './scene/scene.component';
 import { ParkingComponent } from './parking/parking.component';
 import { ThreeDTextComponent } from './three-d-text/three-d-text.component';
+import { FactoryMachineComponent } from './factory-machine/factory-machine.component';
 @NgModule({
   declarations: [
+    FactoryMachineComponent,
     ParkingComponent,
     SceneComponent,
     AppComponent,
