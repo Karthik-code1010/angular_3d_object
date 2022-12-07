@@ -420,7 +420,7 @@ annotations: any = [
     //* Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xd4d4d8)
-    this.loaderGLTF.load('assets/newcar/scene.gltf', (gltf: GLTF) => {
+    this.loaderGLTF.load('assets/factory/scene.gltf', (gltf: GLTF) => {
 console.log('gltf',gltf)
       // this.model = gltf.scene.children[0];
       this.model = gltf.scene;
